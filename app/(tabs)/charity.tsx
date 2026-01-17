@@ -1,40 +1,20 @@
-import { StyleSheet, View } from "react-native";
+import { useGLTF } from "@react-three/drei/native";
+import { Canvas } from "@react-three/fiber/native";
+import { View } from "react-native";
 
-import Button from "@/components/Button";
-import ImageViewer from "@/components/ImageViewer";
+function Model() {
+  const gltf = useGLTF(require("@/assets/models/llama.glb"));
+  return <primitive object={gltf.scene} scale={1.5} />;
+}
 
-const PlaceholderImage = require("@/assets/images/background-image.png");
-
-import * as ImagePicker from 'expo-image-picker';
-
-export default function Index() {
-  const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      console.log(result);
-    } else {
-      alert('You did not select any image.');
-    }
-  };
-
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    alignItems: "center",
-  },
-  imageContainer: {
-    flex: 1,
-  },
-  footerContainer: {
-    flex: 1 / 3,
-    alignItems: "center",
-  },
-});
+export default function App() {
+  return (
+    <View style={{ flex: 1 }}>
+      <Canvas>
+        <ambientLight />
+        <directionalLight position={[5, 5, 5]} />
+        <Model />
+      </Canvas>
+    </View>
+  );
+}
