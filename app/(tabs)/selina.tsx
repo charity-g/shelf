@@ -1,7 +1,6 @@
 import { StyleSheet } from "react-native";
 
-
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 const PlaceholderImage = require("@/assets/images/background-image.png");
 
