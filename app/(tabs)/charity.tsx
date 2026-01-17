@@ -9,13 +9,13 @@ function Model() {
   const scene = Array.isArray(gltf) ? gltf[0]?.scene : gltf?.scene;
 
   if (!scene) return null;
-  return <primitive object={scene} scale={1.5} />;
+  return <primitive object={scene} scale={0.5} position={[0, 0, -90]} />;
 }
 
 export default function App() {
   return (
     <View style={{ flex: 1 }}>
-      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+      <Canvas camera={{ position: [0, 0, 90], fov: 50 }}>
         <ambientLight />
         <directionalLight position={[5, 5, 5]} />
         <Model />
