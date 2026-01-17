@@ -1,31 +1,45 @@
-import Llama from "@/models/Llama";
-// import { OrbitControls } from "@react-three/drei/native";
-import { Canvas } from "@react-three/fiber/native";
-import React, { Suspense } from "react";
-import { View } from "react-native";
+import { GLView } from "expo-gl";
+import { Renderer } from "expo-three";
+import React, { Component } from "react";
+import * as THREE from "three";
 
-export default function Charity() {
-  const renderLlamaCanvas = () => {
+export default class Charity extends Component {
+  render() {
     return (
-      <Canvas shadows>
-        <directionalLight position={[5, 10, 15]} intensity={1} castShadow />
-        <directionalLight position={[-10, 10, 15]} intensity={1} />
-        <directionalLight position={[10, 10, 15]} intensity={1} />
-        <Suspense fallback={null}>
-          <Llama /> This renders the Llama model
-          <mesh
-            receiveShadow
-            rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -1, 0]}
-          >
-            <planeGeometry args={[10, 10]} />
-            <shadowMaterial opacity={0.5} />
-          </mesh>
-        </Suspense>
-        {/* <OrbitControls enableZoom={false} /> */}
-      </Canvas>
+      <GLView style={{ flex: 1 }} onContextCreate={this._onGLContextCreate} />
     );
-  };
+  }
+  _onGLContextCreate = async (gl: WebGLRenderingContext) => {
+    // 1. Scene
+    let scene = new THREE.Scene();
+    // 2. Camera
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      gl.drawingBufferWidth / gl.drawingBufferHeight,
+      0.1,
+      1000,
+    );
+    // 3. Renderer
+    const renderer = new Renderer({ gl });
+    renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
+    const geometry = new THREE.BoxGeometry();
+    let material = new THREE.MeshBasicMaterial({
+      vertexColors: THREE.FaceColors,
+      overdraw: 0.5,
+    });
+    let cube = new THREE.Mesh(geometry, material);
 
-  return <View style={{ flex: 1 }}>{renderLlamaCanvas()}</View>;
+    camera.position.z = 5;
+
+    scene.add(cube);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+      gl.endFrameEXP();
+    };
+    animate();
+  };
 }
