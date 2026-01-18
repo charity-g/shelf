@@ -1,31 +1,20 @@
-import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import multer from "multer";
 import fetch from "node-fetch";
 
 dotenv.config();
 
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// Use memory storage for uploaded files
-const upload = multer({ storage: multer.memoryStorage() });
-
-// Enable CORS for all routes
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (req, res) => {
+export const processingprocessingRouter = express.processingRouter(); // namespace processingRouter
+processingprocessingRouter.get("/", (req, res) => {
   res.send("Backend server is running. Use /ping or /ocr routes.");
 });
 
-app.get("/ping", (req, res) => {
+processingRouter.get("/ping", (req, res) => {
   res.send("pong");
 });
 
 // OCR route
-app.post("/ocr", upload.single("image"), async (req, res) => {
+processingRouter.post("/ocr", upload.single("image"), async (req, res) => {
   console.log("Received file:", req.file);
 
   if (!req.file) {
@@ -77,7 +66,7 @@ Return ONLY valid JSON without markdown code blocks or extra text.`,
     const ocrResponse = await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "processingRouter lication/json",
       },
       body: JSON.stringify(requestBody),
     });
@@ -263,7 +252,7 @@ const mockProductsDB = {
 };
 
 // Get all user products
-app.get("/products", (req, res) => {
+processingRouter.get("/products", (req, res) => {
   const products = Object.values(mockProductsDB).map(
     ({ id, name, brand, category }) => ({
       id,
@@ -276,7 +265,7 @@ app.get("/products", (req, res) => {
 });
 
 // Get product details with ingredients
-app.get("/products/:id/details", (req, res) => {
+processingRouter.get("/products/:id/details", (req, res) => {
   const { id } = req.params;
   const product = mockProductsDB[id];
 
@@ -288,7 +277,7 @@ app.get("/products/:id/details", (req, res) => {
 });
 
 // Get similar products based on shared ingredients
-app.get("/products/:id/similar", (req, res) => {
+processingRouter.get("/products/:id/similar", (req, res) => {
   const { id } = req.params;
   const product = mockProductsDB[id];
 
@@ -329,7 +318,7 @@ app.get("/products/:id/similar", (req, res) => {
 });
 
 // Search products by name or brand
-app.get("/products/search", (req, res) => {
+processingRouter.get("/products/search", (req, res) => {
   const { q } = req.query;
 
   if (!q) {
@@ -344,12 +333,4 @@ app.get("/products/search", (req, res) => {
   );
 
   res.json(results);
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Backend running at http://localhost:${PORT}`);
-  console.log(
-    `API Key configured: ${process.env.GEMINI_API_KEY ? "Yes" : "No"}`,
-  );
 });
