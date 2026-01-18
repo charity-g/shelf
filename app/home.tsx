@@ -9,25 +9,30 @@ import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
-import { UserProduct } from "@/types/UserProduct";
 import { fetchUserProducts } from "../api/userProducts";
+import { getUidFromAsyncStorage } from "../services/auth";
+import { UserProduct } from "../types/UserProduct";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [items, setItems] = useState<UserProduct[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const loadItems = async () => {
-      const products = await fetchUserProducts();
+      const userId = await getUidFromAsyncStorage();
+      if (!userId) {
+        router.replace("/");
+      }
+      const products = await fetchUserProducts({ user_id: userId as string });
       setItems(products);
     };
     loadItems();
   }, []);
 
-  const addItem = (item: {}) => {
-    setItems((prev) => [...prev]); //TODO: call backend to add item or something
+  const addItem = (item: UserProduct) => {
+    setItems((prev) => [...prev, item]);
   };
-  const router = useRouter();
 
   return (
     <Screen>
@@ -36,9 +41,7 @@ export default function Home() {
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onAdd={(item) => {
-          addItem(item); //TODO add item info
-        }}
+        onAdd={addItem}
       />
       <View style={styles.container}>
         {/* Empty shelf placeholder */}

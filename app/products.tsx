@@ -6,68 +6,10 @@ import {
   Text,
   View,
 } from "react-native";
-
-import { fetchUserProducts } from "../api/userProducts";
+import { fetchProducts, groupByCategory } from "../api/userProducts";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
-import { UserProduct } from "../types/UserProduct";
-
-// Product type definition
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-}
-
-interface ProductsByCategory {
-  [category: string]: Product[];
-}
-
-// Categories to display
-const CATEGORIES = [
-  "Cleanser",
-  "Toner",
-  "Exfoliant",
-  "Serum",
-  "Moisturizer",
-  "Sunscreen",
-  "Face Masks",
-];
-
-// TODO: Replace with actual user ID from auth context
-const CURRENT_USER_ID = "user_001";
-
-// Transform backend UserProduct to frontend Product format
-function transformUserProduct(userProduct: UserProduct): Product {
-  return {
-    id: userProduct.PRODUCT_ID,
-    name: userProduct.NAME || userProduct.PRODUCT_DESC || "Unknown Product",
-    brand: userProduct.PRODUCT_DESC || "",
-    category: userProduct.CATEGORY || "Uncategorized",
-  };
-}
-
-async function fetchProducts(): Promise<Product[]> {
-  try {
-    const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
-    return userProducts.map(transformUserProduct);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    throw error;
-  }
-}
-
-// Group products by category
-function groupByCategory(products: Product[]): ProductsByCategory {
-  return products.reduce((acc, product) => {
-    if (!acc[product.category]) {
-      acc[product.category] = [];
-    }
-    acc[product.category].push(product);
-    return acc;
-  }, {} as ProductsByCategory);
-}
+import { CATEGORIES, ProductsByCategory } from "../types/UserProduct";
 
 export default function Products() {
   const [products, setProducts] = useState<ProductsByCategory>({});

@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -8,263 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { fetchUserProducts as fetchUserProductsFromAPI } from "../api/userProducts";
+import {
+  fetchProductDetails,
+  fetchSimilarProducts,
+  fetchUserProductsByUser,
+} from "../api/userProducts";
 import { Screen } from "../components/Screen";
+import { getUidFromAsyncStorage } from "../services/auth";
 import { colors, typography } from "../styles/shared";
-import { UserProduct } from "../types/UserProduct";
-
-// Types
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-}
-
-interface ProductDetails {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-  ingredients: string[];
-}
-
-interface SimilarProduct {
-  id: string;
-  name: string;
-  brand: string;
-  matchPercentage: number;
-  sharedIngredients: string[];
-}
-
-// TODO: Replace with actual user ID from auth context
-const CURRENT_USER_ID = "user_001";
-
-// Transform backend UserProduct to frontend Product format
-function transformUserProduct(userProduct: UserProduct): Product {
-  return {
-    id: userProduct.PRODUCT_ID,
-    name: userProduct.NAME || userProduct.PRODUCT_DESC || "Unknown Product",
-    brand: userProduct.PRODUCT_DESC || "",
-    category: userProduct.CATEGORY || "Uncategorized",
-  };
-}
-
-// Fetch user's products from backend API
-async function fetchUserProducts(): Promise<Product[]> {
-  try {
-    const userProducts = await fetchUserProductsFromAPI({
-      user_id: CURRENT_USER_ID,
-    });
-    return userProducts.map(transformUserProduct);
-  } catch (error) {
-    console.error("Error fetching user products:", error);
-    throw error;
-  }
-}
-
-// Placeholder endpoint: Get product details with ingredients
-async function fetchProductDetails(productId: string): Promise<ProductDetails> {
-  // In real implementation:
-  // const response = await fetch(`${API_BASE}/products/${productId}/details`);
-  // return response.json();
-
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const mockDetails: Record<string, ProductDetails> = {
-    "1": {
-      id: "1",
-      name: "Gentle Foaming Cleanser",
-      brand: "CeraVe",
-      category: "Cleanser",
-      ingredients: [
-        "Ceramides",
-        "Hyaluronic Acid",
-        "Niacinamide",
-        "Glycerin",
-        "Cholesterol",
-      ],
-    },
-    "2": {
-      id: "2",
-      name: "Soy Face Cleanser",
-      brand: "Fresh",
-      category: "Cleanser",
-      ingredients: [
-        "Soy Proteins",
-        "Cucumber Extract",
-        "Rose Water",
-        "Aloe Vera",
-        "Amino Acids",
-      ],
-    },
-    "3": {
-      id: "3",
-      name: "Facial Treatment Essence",
-      brand: "SK-II",
-      category: "Toner",
-      ingredients: [
-        "Pitera",
-        "Galactomyces Ferment Filtrate",
-        "Butylene Glycol",
-        "Sodium Benzoate",
-      ],
-    },
-    "4": {
-      id: "4",
-      name: "Hyaluronic Acid 2% + B5",
-      brand: "The Ordinary",
-      category: "Serum",
-      ingredients: [
-        "Hyaluronic Acid",
-        "Vitamin B5",
-        "Sodium Hyaluronate",
-        "Pentylene Glycol",
-      ],
-    },
-    "5": {
-      id: "5",
-      name: "Niacinamide 10% + Zinc 1%",
-      brand: "The Ordinary",
-      category: "Serum",
-      ingredients: [
-        "Niacinamide",
-        "Zinc PCA",
-        "Tamarindus Indica Seed Gum",
-        "Isoceteth-20",
-      ],
-    },
-    "6": {
-      id: "6",
-      name: "Moisturizing Cream",
-      brand: "CeraVe",
-      category: "Moisturizer",
-      ingredients: [
-        "Ceramides",
-        "Hyaluronic Acid",
-        "Petrolatum",
-        "Glycerin",
-        "Dimethicone",
-      ],
-    },
-    "7": {
-      id: "7",
-      name: "UV Aqua Rich Watery Essence",
-      brand: "Biore",
-      category: "Sunscreen",
-      ingredients: [
-        "Octinoxate",
-        "Zinc Oxide",
-        "Hyaluronic Acid",
-        "Royal Jelly Extract",
-        "Citrus Extract",
-      ],
-    },
-  };
-
-  return mockDetails[productId] || mockDetails["1"];
-}
-
-// Placeholder endpoint: Get similar products from user's collection
-async function fetchSimilarProducts(
-  productId: string,
-): Promise<SimilarProduct[]> {
-  // In real implementation:
-  // const response = await fetch(`${API_BASE}/products/${productId}/similar`);
-  // return response.json();
-
-  await new Promise((resolve) => setTimeout(resolve, 600));
-
-  const mockSimilar: Record<string, SimilarProduct[]> = {
-    "1": [
-      {
-        id: "2",
-        name: "Soy Face Cleanser",
-        brand: "Fresh",
-        matchPercentage: 72,
-        sharedIngredients: ["Glycerin", "Amino Acids"],
-      },
-      {
-        id: "6",
-        name: "Moisturizing Cream",
-        brand: "CeraVe",
-        matchPercentage: 85,
-        sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"],
-      },
-    ],
-    "2": [
-      {
-        id: "1",
-        name: "Gentle Foaming Cleanser",
-        brand: "CeraVe",
-        matchPercentage: 72,
-        sharedIngredients: ["Glycerin", "Amino Acids"],
-      },
-    ],
-    "3": [
-      {
-        id: "4",
-        name: "Hyaluronic Acid 2% + B5",
-        brand: "The Ordinary",
-        matchPercentage: 45,
-        sharedIngredients: ["Butylene Glycol"],
-      },
-    ],
-    "4": [
-      {
-        id: "6",
-        name: "Moisturizing Cream",
-        brand: "CeraVe",
-        matchPercentage: 78,
-        sharedIngredients: ["Hyaluronic Acid", "Glycerin"],
-      },
-      {
-        id: "7",
-        name: "UV Aqua Rich Watery Essence",
-        brand: "Biore",
-        matchPercentage: 55,
-        sharedIngredients: ["Hyaluronic Acid"],
-      },
-    ],
-    "5": [
-      {
-        id: "1",
-        name: "Gentle Foaming Cleanser",
-        brand: "CeraVe",
-        matchPercentage: 68,
-        sharedIngredients: ["Niacinamide"],
-      },
-    ],
-    "6": [
-      {
-        id: "1",
-        name: "Gentle Foaming Cleanser",
-        brand: "CeraVe",
-        matchPercentage: 85,
-        sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"],
-      },
-      {
-        id: "4",
-        name: "Hyaluronic Acid 2% + B5",
-        brand: "The Ordinary",
-        matchPercentage: 78,
-        sharedIngredients: ["Hyaluronic Acid", "Glycerin"],
-      },
-    ],
-    "7": [
-      {
-        id: "4",
-        name: "Hyaluronic Acid 2% + B5",
-        brand: "The Ordinary",
-        matchPercentage: 55,
-        sharedIngredients: ["Hyaluronic Acid"],
-      },
-    ],
-  };
-
-  return mockSimilar[productId] || [];
-}
+import { Product, ProductDetails, SimilarProduct } from "../types/UserProduct";
 
 export default function Compare() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -277,18 +30,26 @@ export default function Compare() {
   const [similarProducts, setSimilarProducts] = useState<SimilarProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [userId, setUserId] = useState<string>("");
+  const router = useRouter();
 
   // Load user's products on mount
   useEffect(() => {
     async function loadProducts() {
       try {
-        const data = await fetchUserProducts();
+        const uid = await getUidFromAsyncStorage();
+        if (!uid) {
+          router.replace("/");
+        }
+        setUserId(uid);
+        const data = await fetchUserProductsByUser(uid as string);
         setProducts(data);
         setFilteredProducts(data);
       } finally {
         setLoadingProducts(false);
       }
     }
+
     loadProducts();
   }, []);
 
@@ -316,11 +77,11 @@ export default function Compare() {
 
     try {
       const [details, similar] = await Promise.all([
-        fetchProductDetails(product.id),
-        fetchSimilarProducts(product.id),
+        fetchProductDetails(userId, product.id),
+        fetchSimilarProducts(userId, product.id),
       ]);
-      setProductDetails(details);
-      setSimilarProducts(similar);
+      setProductDetails(userId, details);
+      setSimilarProducts(userId, similar);
     } finally {
       setLoadingDetails(false);
     }
