@@ -1,7 +1,8 @@
 import { useFrame } from "@react-three/fiber/native";
 import { useEffect, useRef } from "react";
 import { Color, Group, ObjectLoader } from "three";
-import modelJson from "../assets/models/spray_bottle.json";
+import cylinder from "../assets/models/cylinder.json";
+import spray from "../assets/models/spray_bottle.json";
 
 interface JSONModelProps {
   category?: string;
@@ -46,12 +47,71 @@ export function JSONModel({
 }: JSONModelProps) {
   const object = useRef<THREE.Object3D | null>(null);
 
+  const config = getModelConfig(category);
+
   useEffect(() => {
     const loader = new ObjectLoader();
-    const loadedObject = loader.parse(modelJson as any);
+    const loadedObject = loader.parse(config.obj as any);
     object.current = loadedObject;
   }, []);
 
   if (!object.current) return null;
   return <JSONModelContent object={object.current} spinnable={spinnable} />;
+}
+
+interface ModelConfig {
+  obj: any;
+  scale: number;
+  position: [number, number, number];
+}
+
+const categoricalMapping: Record<string, ModelConfig> = {
+  cleanser: {
+    obj: spray,
+    scale: 3,
+    position: [0, 0, 6],
+  },
+  toner: {
+    obj: cylinder,
+    scale: 2,
+    position: [0, 0, 3],
+  },
+  exfoliant: {
+    obj: cylinder,
+    scale: 2,
+    position: [0, 0, 3],
+  },
+  serum: {
+    obj: cylinder,
+    scale: 2,
+    position: [0, 0, 3],
+  },
+  moisturizer: {
+    obj: cylinder,
+    scale: 2,
+    position: [0, 0, 3],
+  },
+  sunscreen: {
+    obj: spray,
+    scale: 1.5,
+    position: [0, -0.5, 0],
+  },
+  facemasks: {
+    obj: spray,
+    scale: 2,
+    position: [0, 0, 3],
+  },
+};
+
+export default function getModelConfig(category: string): ModelConfig {
+  category = category.toLowerCase().replace(" ", "");
+  if (category in categoricalMapping) {
+    return categoricalMapping[category];
+  }
+  console.log("Category not found, defaulting to spray_bottle.glb:", category);
+  return {
+    obj: spray,
+    scale: 1.5,
+    position: [0, -0.5, 0],
+  };
 }

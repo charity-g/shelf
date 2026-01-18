@@ -1,7 +1,6 @@
 import { useGLTF } from "@react-three/drei/native";
 import { useFrame } from "@react-three/fiber/native";
 import { useMemo, useRef } from "react";
-import { Box3, Group, Vector3 } from "three";
 import getModelConfig from "../types/modelConfig";
 
 interface GLBModelProps {
@@ -16,19 +15,10 @@ export default function GLBModel({
   const config = getModelConfig(category);
   const gltf = useGLTF(config.path);
 
-  const pivotRef = useRef<Group>(null);
+  const pivotRef = useRef(null);
 
   const scene = useMemo(() => {
-    const original = gltf.scene;
-    const cloned = original.clone(true);
-
-    const box = new Box3().setFromObject(cloned);
-    const center = new Vector3();
-    box.getCenter(center);
-
-    cloned.position.sub(center);
-
-    return cloned;
+    return gltf.scene.clone(true);
   }, [gltf]);
 
   useFrame(() => {
@@ -39,7 +29,7 @@ export default function GLBModel({
 
   return (
     <group ref={pivotRef}>
-      <primitive object={scene} scale={config.scale} />
-    </group>
+      <primitive object={scene} scale={config.scale} />oned;
+    </group>  }, [gltf, threeScene]);
   );
 }
