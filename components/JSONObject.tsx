@@ -1,25 +1,47 @@
-import { useEffect, useState } from "react";
-import { ObjectLoader } from "three";
+import { useFrame } from "@react-three/fiber/native";
+import { useEffect, useRef } from "react";
+import { Group, ObjectLoader } from "three";
 import modelJson from "../assets/models/spray_bottle.json";
-// import modelJson from "../assets/models/cylinder.json";
 
 interface JSONModelProps {
   category?: string;
   spinnable?: boolean;
 }
 
+function JSONModelContent({
+  object,
+  spinnable,
+}: {
+  object: THREE.Object3D;
+  spinnable: boolean;
+}) {
+  const pivotRef = useRef<Group>(null);
+
+  useFrame(() => {
+    if (spinnable && pivotRef.current) {
+      pivotRef.current.rotation.y += 0.01;
+    }
+  });
+
+  return (
+    <group ref={pivotRef}>
+      <primitive object={object} scale={0.7} position={[0, 0, 0]} />
+    </group>
+  );
+}
+
 export function JSONModel({
   category = "cleanser",
   spinnable = false,
 }: JSONModelProps) {
-  const [object, setObject] = useState<THREE.Object3D | null>(null);
+  const object = useRef<THREE.Object3D | null>(null);
 
   useEffect(() => {
     const loader = new ObjectLoader();
     const loadedObject = loader.parse(modelJson as any);
-    setObject(loadedObject);
+    object.current = loadedObject;
   }, []);
 
-  if (!object) return null;
-  return <primitive object={object} scale={1} position={[0, 0, -5]} />;
+  if (!object.current) return null;
+  return <JSONModelContent object={object.current} spinnable={spinnable} />;
 }
