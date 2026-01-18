@@ -1,11 +1,7 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
@@ -36,7 +32,14 @@ export default function Home() {
               router.push("/compare" as Href);
             }}
           >
-            <Text style={styles.compareText}>Compare</Text>
+            <LinearGradient
+              colors={[colors.accentSoft, colors.accent]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.compareGradient}
+            >
+              <Text style={styles.compareText}>Compare</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           <View style={styles.actionRow}>
@@ -91,25 +94,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     alignSelf: "center",
     minWidth: 160,
     justifyContent: "center",
-    backgroundColor: colors.accentSoft,
-    borderWidth: 1,
-    borderColor: colors.line,
     shadowColor: colors.shadow,
     shadowOpacity: 0.18,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 3,
+    overflow: "hidden",
   },
-  compareIcon: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: colors.accent,
+  compareGradient: {
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   compareText: {
     fontSize: 14,
