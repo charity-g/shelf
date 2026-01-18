@@ -1,4 +1,5 @@
 import { UserProduct } from "../types/UserProduct";
+import { apiRequest } from "./api";
 
 // ============================================
 // User Products API
@@ -41,7 +42,7 @@ export async function fetchUserProductsByUserId(
 /**
  * Create a new user product
  */
-export async function createUserProduct(product: {
+export async function createUserProductText(product: {
   user_id: string;
   product_id: string;
   product_desc?: string;
@@ -60,6 +61,18 @@ export async function createUserProduct(product: {
       TIME_OF_DAY: product.time_of_day,
       SKIN_TYPE: product.skin_type,
       NAME: product.name,
+    }),
+  });
+}
+
+/**
+ * Create a new user product
+ */
+export async function createUserProduct(image: any, user_id: string) {
+  return apiRequest("/user-products", {
+    method: "POST",
+    body: JSON.stringify({
+      USER_ID: user_id,
     }),
   });
 }
