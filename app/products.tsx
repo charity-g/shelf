@@ -22,7 +22,6 @@ export default function Products() {
         setLoading(true);
         const data = await fetchProductsAll();
         setProducts(groupByCategory(data));
-        console.log("setproducts", products);
       } catch (err) {
         setError("Failed to load products");
       } finally {

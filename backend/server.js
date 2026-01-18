@@ -512,15 +512,15 @@ app.delete("/products/:id", async (req, res) => {
 
 app.get("/products-search", async (req, res) => {
   const { search } = req.query;
-  let sql = "SELECT * FROM DAVID.PUBLIC.PRODUCTS WHERE 1=1";
+  let sql = "SELECT * FROM DAVID.PUBLIC.USER_ID WHERE 1=1";
   const binds = [];
 
   try {
     if (search) {
       sql +=
-        ' AND (LOWER("NAME") LIKE LOWER(?) OR LOWER("BRAND") OR LOWER("PRODUCT_DESC") LIKE LOWER(?))';
+        'AND (LOWER("NAME") LIKE LOWER(?)) AND (LOWER("CATEGORY") LIKE LOWER(?) OR LOWER("SKIN_TYPE") LIKE LOWER(?) OR LOWER("PRODUCT_DESC") LIKE LOWER(?))';
       const searchPattern = `%${search}%`;
-      binds.push(searchPattern, searchPattern);
+      binds.push(searchPattern, searchPattern, searchPattern, searchPattern);
     }
     sql += " LIMIT 500";
     const rows = await execSQL(sql, binds);

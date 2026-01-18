@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 
+import { fetchUserProductGeneralSearch } from "../api/userProducts";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 import { Product } from "../types/UserProduct";
@@ -35,7 +36,22 @@ export default function Discover() {
     useState<Product[]>(defaultProducts);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {}, [query]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const results = await fetchUserProductGeneralSearch(query);
+        setSearchProducts(results);
+        console.log("Fetched products:", results);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [query]);
 
   return (
     <Screen>
@@ -131,6 +147,9 @@ const styles = StyleSheet.create({
   searchInput: {
     fontSize: 12,
     color: colors.text,
+  },
+  searchInputFocused: {
+    color: colors.accent,
   },
   searchButton: {
     alignSelf: "flex-end",

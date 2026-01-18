@@ -56,7 +56,7 @@ export async function fetchUserProductGeneralSearch(
   const endpoint = `/products-search?${queryString}`;
 
   const data = await apiRequest(endpoint);
-  return data.user_products.map(transformUserProduct) || [];
+  return data.products.map(transformUserProduct) || [];
 }
 
 /**
