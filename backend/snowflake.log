@@ -692,3 +692,36 @@
 {"level":"INFO","message":"[9:33:48.041 AM]: No config file path found. Client config will not be used."}
 {"level":"INFO","message":"[9:33:48.041 AM]: Easy Logging is disabled as no config has been found"}
 {"level":"INFO","message":"[9:33:48.046 AM]: Connection[id: b0fffe6b-27eb-4a5a-9983-62e8d8bfc9c9] - connected successfully after 21.302700000000186 milliseconds"}
+{"level":"INFO","message":"[10:16:33.222 AM]: Creating new connection object"}
+{"level":"INFO","message":"[10:16:33.353 AM]: Creating Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] with host: NUVLZPL-IXB24790.snowflakecomputing.com, account: NUVLZPL-IXB24790, accessUrl: https://NUVLZPL-IXB24790.snowflakecomputing.com, user: SKINCARE_SERVICE, password is not provided, role: SKINCARE_APP_ROLE, database: DAVID, schema: PUBLIC, warehouse: COMPUTE_WH, region: undefined, authenticator: SNOWFLAKE_JWT, ocsp mode: FAIL_OPEN, os: win32, os version: 10.0.22631"}
+{"level":"INFO","message":"[10:16:33.354 AM]: Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] additional details: passcode in password is provided, passcode is not provided, private key is provided, application: undefined, client name: snowflake-sdk, client version: 1.15.0, retry timeout: 300, private key path: undefined, private key pass is not provided, client store temporary credential: false, browser response timeout: 120000"}
+{"level":"INFO","message":"[10:16:33.355 AM]: Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] - connection object created successfully."}
+{"level":"INFO","message":"[10:16:33.356 AM]: Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] - connecting. Associated Snowflake domain: GLOBAL"}
+{"level":"INFO","message":"[10:16:33.366 AM]: Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] - authentication successful using: SNOWFLAKE_JWT"}
+{"level":"INFO","message":"[10:16:33.367 AM]: Trying to initialize Easy Logging"}
+{"level":"INFO","message":"[10:16:33.372 AM]: No client config detected."}
+{"level":"INFO","message":"[10:16:33.372 AM]: No config file path found. Client config will not be used."}
+{"level":"INFO","message":"[10:16:33.378 AM]: Easy Logging is disabled as no config has been found"}
+{"level":"INFO","message":"[10:16:33.383 AM]: Connection[id: 28a1faf9-d6b7-49cb-8c13-4bb82f448e30] - connected successfully after 27.16920000000391 milliseconds"}
+{"level":"INFO","message":"[10:18:12.816 AM]: Creating new connection object"}
+{"level":"INFO","message":"[10:18:13.052 AM]: Creating Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] with host: NUVLZPL-IXB24790.snowflakecomputing.com, account: NUVLZPL-IXB24790, accessUrl: https://NUVLZPL-IXB24790.snowflakecomputing.com, user: SKINCARE_SERVICE, password is not provided, role: SKINCARE_APP_ROLE, database: DAVID, schema: PUBLIC, warehouse: COMPUTE_WH, region: undefined, authenticator: SNOWFLAKE_JWT, ocsp mode: FAIL_OPEN, os: win32, os version: 10.0.22631"}
+{"level":"INFO","message":"[10:18:13.053 AM]: Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] additional details: passcode in password is provided, passcode is not provided, private key is provided, application: undefined, client name: snowflake-sdk, client version: 1.15.0, retry timeout: 300, private key path: undefined, private key pass is not provided, client store temporary credential: false, browser response timeout: 120000"}
+{"level":"INFO","message":"[10:18:13.054 AM]: Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] - connection object created successfully."}
+{"level":"INFO","message":"[10:18:13.056 AM]: Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] - connecting. Associated Snowflake domain: GLOBAL"}
+{"level":"INFO","message":"[10:18:13.082 AM]: Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] - authentication successful using: SNOWFLAKE_JWT"}
+{"level":"INFO","message":"[10:18:13.085 AM]: Trying to initialize Easy Logging"}
+{"level":"INFO","message":"[10:18:13.118 AM]: Creating new connection object"}
+{"level":"INFO","message":"[10:18:13.120 AM]: Creating Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] with host: NUVLZPL-IXB24790.snowflakecomputing.com, account: NUVLZPL-IXB24790, accessUrl: https://NUVLZPL-IXB24790.snowflakecomputing.com, user: SKINCARE_SERVICE, password is not provided, role: SKINCARE_APP_ROLE, database: DAVID, schema: PUBLIC, warehouse: COMPUTE_WH, region: undefined, authenticator: SNOWFLAKE_JWT, ocsp mode: FAIL_OPEN, os: win32, os version: 10.0.22631"}
+{"level":"INFO","message":"[10:18:13.124 AM]: Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] additional details: passcode in password is provided, passcode is not provided, private key is provided, application: undefined, client name: snowflake-sdk, client version: 1.15.0, retry timeout: 300, private key path: undefined, private key pass is not provided, client store temporary credential: false, browser response timeout: 120000"}
+{"level":"INFO","message":"[10:18:13.135 AM]: Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] - connection object created successfully."}
+{"level":"INFO","message":"[10:18:13.141 AM]: Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] - connecting. Associated Snowflake domain: GLOBAL"}
+{"level":"INFO","message":"[10:18:13.155 AM]: Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] - authentication successful using: SNOWFLAKE_JWT"}
+{"level":"INFO","message":"[10:18:13.157 AM]: Trying to initialize Easy Logging"}
+{"level":"INFO","message":"[10:18:13.170 AM]: No client config detected."}
+{"level":"INFO","message":"[10:18:13.170 AM]: No config file path found. Client config will not be used."}
+{"level":"INFO","message":"[10:18:13.171 AM]: Easy Logging is disabled as no config has been found"}
+{"level":"INFO","message":"[10:18:13.181 AM]: Connection[id: 2d030388-a542-4872-a7e1-7cb7a4303eef] - connected successfully after 125.37290000000212 milliseconds"}
+{"level":"INFO","message":"[10:18:13.224 AM]: No client config detected."}
+{"level":"INFO","message":"[10:18:13.225 AM]: No config file path found. Client config will not be used."}
+{"level":"INFO","message":"[10:18:13.225 AM]: Easy Logging is disabled as no config has been found"}
+{"level":"INFO","message":"[10:18:13.229 AM]: Connection[id: e7a16457-285e-460a-958a-cd22bc57fd44] - connected successfully after 87.83350000000792 milliseconds"}

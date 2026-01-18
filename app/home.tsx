@@ -30,8 +30,8 @@ export default function Home() {
     loadItems();
   }, []);
 
-  const addItem = (item: {}) => {
-    setItems((prev) => [...prev]); //TODO: call backend to add item or something
+  const addItem = (item: UserProduct) => {
+    setItems((prev) => [...prev, item]);
   };
 
   return (
@@ -41,10 +41,7 @@ export default function Home() {
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onAdd={(item: UserProduct) => {
-          console.log("Adding item to shelf:", item);
-          addItem(item);
-        }}
+        onAdd={addItem}
       />
       <View style={styles.container}>
         {/* Empty shelf placeholder */}

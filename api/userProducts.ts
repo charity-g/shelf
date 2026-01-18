@@ -51,7 +51,7 @@ export async function fetchUserProductsByUserId(
  */
 export async function createUserProductText(
   product: ocrExtractedProduct,
-): Promise<any> {
+): Promise<UserProduct> {
   const userProduct: UserProduct = {
     USER_ID: product.user_id,
     PRODUCT_ID: product.product_id,
@@ -61,10 +61,11 @@ export async function createUserProductText(
     SKIN_TYPE: product.skin_type,
     NAME: product.name,
   };
-  return apiRequest("/user-products", {
+  await apiRequest("/user-products", {
     method: "POST",
     body: JSON.stringify(userProduct),
   });
+  return userProduct;
 }
 
 /**
