@@ -1,5 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Image, StyleSheet, View } from "react-native";
+
+import { Canvas } from "@react-three/fiber/native";
+import GLBModel from "./GLBModel";
 
 interface ShelfGridProps {
   rows: number;
@@ -10,6 +13,26 @@ interface ShelfGridProps {
 }
 
 const ShelfGrid = ({
+  rows,
+  columns,
+  items,
+  slotSize = 80,
+  spacing = 10,
+}: ShelfGridProps) => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <Suspense fallback={null}>
+          <GLBModel />
+        </Suspense>
+      </Canvas>
+    </View>
+  );
+};
+
+const ShelfGrid1 = ({
   rows,
   columns,
   items,
