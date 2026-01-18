@@ -12,6 +12,7 @@ export async function signup(email, password, username) {
     return user;
 }
 
+
 export async function login(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     return userCredential.user;
