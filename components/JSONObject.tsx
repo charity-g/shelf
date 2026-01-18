@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import { Color, Group, ObjectLoader } from "three";
 import cream from "../assets/models/cream.json";
 import cylinder from "../assets/models/cylinder.json";
-import serum from "../assets/models/inverted_squeez_bootle.json";
 import lotion from "../assets/models/lotion.json";
 import spray from "../assets/models/spray_bottle.json";
 
@@ -15,9 +14,13 @@ interface JSONModelProps {
 function JSONModelContent({
   object,
   spinnable,
+  scale,
+  position,
 }: {
   object: THREE.Object3D;
   spinnable: boolean;
+  scale: number;
+  position: [number, number, number];
 }) {
   const pivotRef = useRef<Group>(null);
 
@@ -39,7 +42,7 @@ function JSONModelContent({
 
   return (
     <group ref={pivotRef}>
-      <primitive object={object} scale={0.7} position={[0, 0, 0]} />
+      <primitive object={object} scale={scale} position={position} />
     </group>
   );
 }
@@ -56,10 +59,17 @@ export function JSONModel({
     const loader = new ObjectLoader();
     const loadedObject = loader.parse(config.obj as any);
     object.current = loadedObject;
-  }, []);
+  }, [config]);
 
   if (!object.current) return null;
-  return <JSONModelContent object={object.current} spinnable={spinnable} />;
+  return (
+    <JSONModelContent
+      object={object.current}
+      spinnable={spinnable}
+      scale={config.scale}
+      position={config.position}
+    />
+  );
 }
 
 interface ModelConfig {
@@ -71,38 +81,38 @@ interface ModelConfig {
 const categoricalMapping: Record<string, ModelConfig> = {
   cleanser: {
     obj: spray,
-    scale: 3,
-    position: [0, 0, 6],
+    scale: 0.8,
+    position: [0, 0, 0],
   },
   toner: {
     obj: lotion,
-    scale: 2,
-    position: [0, 0, 3],
+    scale: 0.6,
+    position: [0, 0, 0],
   },
   exfoliant: {
     obj: cylinder,
-    scale: 2,
-    position: [0, 0, 3],
+    scale: 0.6,
+    position: [0, 0, 0],
   },
   serum: {
-    obj: serum,
-    scale: 2,
-    position: [0, 0, 3],
+    obj: lotion,
+    scale: 0.6,
+    position: [0, 0, 0],
   },
   moisturizer: {
     obj: lotion,
-    scale: 2,
-    position: [0, 0, 3],
+    scale: 0.6,
+    position: [0, 0, 0],
   },
   sunscreen: {
     obj: spray,
-    scale: 1.5,
-    position: [0, -0.5, 0],
+    scale: 0.8,
+    position: [0, 0, 0],
   },
   facemasks: {
     obj: cream,
-    scale: 2,
-    position: [0, 0, 3],
+    scale: 1,
+    position: [0, 0, 0],
   },
 };
 
@@ -114,7 +124,7 @@ export default function getModelConfig(category: string): ModelConfig {
   console.log("Category not found, defaulting to spray_bottle.glb:", category);
   return {
     obj: spray,
-    scale: 1.5,
-    position: [0, -0.5, 0],
+    scale: 0.7,
+    position: [0, 0, 0],
   };
 }
