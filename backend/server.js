@@ -510,6 +510,27 @@ app.delete("/products/:id", async (req, res) => {
 // USER_ID / User Products Endpoints
 // ============================================
 
+app.get("/products-search", async (req, res) => {
+  const { search } = req.query;
+  let sql = "SELECT * FROM DAVID.PUBLIC.PRODUCTS WHERE 1=1";
+  const binds = [];
+
+  try {
+    if (search) {
+      sql +=
+        ' AND (LOWER("NAME") LIKE LOWER(?) OR LOWER("BRAND") OR LOWER("PRODUCT_DESC") LIKE LOWER(?))';
+      const searchPattern = `%${search}%`;
+      binds.push(searchPattern, searchPattern);
+    }
+    sql += " LIMIT 500";
+    const rows = await execSQL(sql, binds);
+    res.json({ products: rows });
+  } catch (error) {
+    console.error("Get user products error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get all user products (with optional filters)
 app.get("/user-products", async (req, res) => {
   try {

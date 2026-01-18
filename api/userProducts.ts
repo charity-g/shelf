@@ -46,6 +46,19 @@ export async function fetchUserProductsByUserId(
   return data.user_products || [];
 }
 
+export async function fetchUserProductGeneralSearch(
+  query: string,
+): Promise<Product[]> {
+  const params = new URLSearchParams();
+  params.append("search", query);
+
+  const queryString = params.toString();
+  const endpoint = `/products-search?${queryString}`;
+
+  const data = await apiRequest(endpoint);
+  return data.user_products.map(transformUserProduct) || [];
+}
+
 /**
  * Create a new user product
  */

@@ -35,9 +35,7 @@ export default function Discover() {
     useState<Product[]>(defaultProducts);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    console.log("Searching for products with query:", query);
-  }, [query]);
+  useEffect(() => {}, [query]);
 
   return (
     <Screen>
