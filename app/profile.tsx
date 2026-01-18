@@ -9,46 +9,22 @@ import { InfoModal } from "../components/settings/InfoModal";
 import { LinkModal } from "../components/settings/LinkModal";
 import { SettingRow } from "../components/settings/SettingRow";
 import { ToggleModal } from "../components/settings/ToggleModal";
+import { getUserFromAsyncStorage } from "../services/auth";
 
-// Placeholder API endpoint
-const API_ENDPOINT = "https://api.example.com/profile";
-
-// Mock API fetch function
 async function fetchProfile(): Promise<ProfileData> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 600));
-
-  // Hardcoded profile data (pretending this comes from API)
-  const mockProfileData: ProfileData = {
+  const user = await getUserFromAsyncStorage();
+  console.log("Fetching profile data... firebase user", user);
+  return {
     user: {
-      id: "user_001",
-      name: "Bob Bob",
-      email: "bob@gmail.com",
-      avatarUrl: "https://api.example.com/avatars/user_001.jpg",
+      name: user.displayName || "User",
+      email: user.email || "",
       skinType: "Combination",
-      joinedDate: "2024-03-15",
+      joinedDate: user.metadata.creationTime || new Date().toISOString(),
+      id: user.uid,
+      avatarUrl: "",
     },
-    settings: [
-      { id: "s1", label: "Push Notifications", type: "toggle", value: true },
-      {
-        id: "s2",
-        label: "Product Expiry Reminders",
-        type: "toggle",
-        value: true,
-      },
-      { id: "s3", label: "Skin Type", type: "info", value: "Combination" },
-      { id: "s4", label: "Routine Reminders", type: "toggle", value: false },
-      { id: "s5", label: "Privacy Settings", type: "link" },
-      { id: "s6", label: "Help & Support", type: "link" },
-    ],
+    settings: [],
   };
-
-  // In real implementation, this would be:
-  // const response = await fetch(API_ENDPOINT);
-  // const data = await response.json();
-  // return data;
-
-  return mockProfileData;
 }
 
 export default function Profile() {
