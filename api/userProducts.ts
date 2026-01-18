@@ -134,7 +134,7 @@ export async function fetchUserProductsByUser(
   currentUserId: string,
 ): Promise<Product[]> {
   try {
-    const userProducts = await fetchUserProductsFromAPI({
+    const userProducts = await fetchUserProducts({
       user_id: currentUserId,
     });
     return userProducts.map(transformUserProduct);

@@ -3,28 +3,11 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
+import { ProfileData, Setting } from "../types/UserProfile";
 
-// Type definitions
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  avatarUrl: string;
-  skinType: string;
-  joinedDate: string;
-}
-
-interface Setting {
-  id: string;
-  label: string;
-  type: "toggle" | "link" | "info";
-  value?: string | boolean;
-}
-
-interface ProfileData {
-  user: UserProfile;
-  settings: Setting[];
-}
+import { InfoModal } from "../components/settings/InfoModal";
+import { LinkModal } from "../components/settings/LinkModal";
+import { SettingRow } from "../components/settings/SettingRow";
 
 // Placeholder API endpoint
 const API_ENDPOINT = "https://api.example.com/profile";
@@ -71,6 +54,8 @@ export default function Profile() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [settings, setSettings] = useState<Setting[]>([]);
+  const [activeSetting, setActiveSetting] = useState<Setting | null>(null);
 
   useEffect(() => {
     async function loadProfile() {
@@ -78,6 +63,7 @@ export default function Profile() {
         setLoading(true);
         const data = await fetchProfile();
         setProfileData(data);
+        setSettings(data.settings);
       } catch (err) {
         setError("Failed to load profile");
       } finally {
@@ -87,6 +73,20 @@ export default function Profile() {
 
     loadProfile();
   }, []);
+
+  const handleSaveSetting = (updatedValue: string) => {
+    if (!activeSetting) return;
+
+    // Update the settings array
+    setSettings((prev) =>
+      prev.map((s) =>
+        s.id === activeSetting.id ? { ...s, value: updatedValue } : s,
+      ),
+    );
+
+    // Close the modal
+    setActiveSetting(null);
+  };
 
   if (loading) {
     return (
@@ -111,7 +111,7 @@ export default function Profile() {
     );
   }
 
-  const { user, settings } = profileData;
+  const { user } = profileData;
 
   return (
     <Screen>
@@ -144,28 +144,25 @@ export default function Profile() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
         {settings.map((setting) => (
-          <View key={setting.id} style={styles.settingRow}>
-            <View
-              style={[
-                styles.settingDot,
-                setting.type === "toggle" && styles.settingDotToggle,
-                setting.type === "link" && styles.settingDotLink,
-              ]}
-            />
-            <Text style={styles.settingLabel}>{setting.label}</Text>
-            {setting.type === "info" && setting.value && (
-              <Text style={styles.settingValue}>{String(setting.value)}</Text>
-            )}
-            {setting.type === "toggle" && (
-              <Text style={styles.settingToggle}>
-                {setting.value ? "On" : "Off"}
-              </Text>
-            )}
-            {setting.type === "link" && (
-              <Text style={styles.settingArrow}>›</Text>
-            )}
-          </View>
+          <SettingRow
+            key={setting.id}
+            setting={setting}
+            onPress={() => setActiveSetting(setting)}
+          />
         ))}
+
+        <InfoModal
+          visible={activeSetting?.type === "info"}
+          label={activeSetting?.label ?? ""}
+          value={String(activeSetting?.value ?? "")}
+          onClose={() => setActiveSetting(null)}
+        />
+
+        <LinkModal
+          visible={activeSetting?.type === "link"}
+          title={activeSetting?.label ?? ""}
+          onClose={() => setActiveSetting(null)}
+        />
       </View>
     </Screen>
   );
