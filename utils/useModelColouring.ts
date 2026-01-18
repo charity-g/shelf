@@ -18,7 +18,7 @@ export function useModelColoring(object: Object3D | null, highlight = false) {
     object.traverse((child: any) => {
       if (child.isMesh && child.material) {
         if (highlight) {
-          const highlightColor = new Color(0xffff00); // Yellow for highlight
+          const highlightColor = new Color(0xffff00); // Yellow
           child.material = child.material.clone();
           child.material.color.copy(highlightColor);
         } else {
@@ -26,6 +26,8 @@ export function useModelColoring(object: Object3D | null, highlight = false) {
           child.material = child.material.clone();
           child.material.color.copy(base);
         }
+
+        child.material.needsUpdate = true;
         index++;
       }
     });
