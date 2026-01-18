@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Href, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Shelf } from "@/components/Shelf";
@@ -14,7 +14,15 @@ import { fetchUserProducts } from "../src/api/snowflake";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [items, setItems] = useState<UserProduct[]>(fetchUserProducts());
+  const [items, setItems] = useState<UserProduct[]>([]);
+
+  useEffect(() => {
+    const loadItems = async () => {
+      const products = await fetchUserProducts();
+      setItems(products);
+    };
+    loadItems();
+  }, []);
 
   const addItem = (item: {}) => {
     setItems((prev) => [...prev]); //TODO: call backend to add item or something
