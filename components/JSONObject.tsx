@@ -1,10 +1,7 @@
 import { useFrame } from "@react-three/fiber/native";
 import { useEffect, useRef, useState } from "react";
 import { Group, ObjectLoader } from "three";
-import cream from "../assets/models/cream.json";
-import cylinder from "../assets/models/cylinder.json";
-import lotion from "../assets/models/lotion.json";
-import spray from "../assets/models/spray_bottle.json";
+import getModelConfig from "../utils/getModelConfig";
 import { useModelColoring } from "../utils/useModelColouring";
 
 interface JSONModelProps {
@@ -50,7 +47,7 @@ export function JSONModel({
   useEffect(() => {
     const loader = new ObjectLoader();
     const loadedObject = loader.parse(config.obj as any);
-    setObject(loadedObject); // 🔥 triggers re-render
+    setObject(loadedObject); // triggers re-render instead of lost useRef
   }, [config]);
 
   if (!object) return null;
@@ -63,61 +60,4 @@ export function JSONModel({
       position={config.position}
     />
   );
-}
-
-interface ModelConfig {
-  obj: any;
-  scale: number;
-  position: [number, number, number];
-}
-
-const categoricalMapping: Record<string, ModelConfig> = {
-  cleanser: {
-    obj: spray,
-    scale: 0.8,
-    position: [0, 0, 0],
-  },
-  toner: {
-    obj: lotion,
-    scale: 0.6,
-    position: [0, 0, 0],
-  },
-  exfoliant: {
-    obj: cylinder,
-    scale: 0.6,
-    position: [0, 0, 0],
-  },
-  serum: {
-    obj: lotion,
-    scale: 0.6,
-    position: [0, 0, 0],
-  },
-  moisturizer: {
-    obj: lotion,
-    scale: 0.6,
-    position: [0, 0, 0],
-  },
-  sunscreen: {
-    obj: spray,
-    scale: 0.8,
-    position: [0, 0, 0],
-  },
-  facemasks: {
-    obj: cream,
-    scale: 1,
-    position: [0, 0, 0],
-  },
-};
-
-export default function getModelConfig(category: string): ModelConfig {
-  category = category.toLowerCase().replace(" ", "");
-  if (category in categoricalMapping) {
-    return categoricalMapping[category];
-  }
-  console.log("Category not found, defaulting to spray_bottle.glb:", category);
-  return {
-    obj: spray,
-    scale: 0.7,
-    position: [0, 0, 0],
-  };
 }
