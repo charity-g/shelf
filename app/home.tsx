@@ -2,6 +2,7 @@ import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { Shelf } from "@/components/Shelf";
 import SpinnableShelf from "@/components/SpinnableShelf";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
@@ -65,14 +66,8 @@ export default function Home() {
 
   return (
     <Screen>
+      <Shelf data={items}></Shelf>
       <SpinnableShelf data={items} />
-      {/* <ShelfGrid
-        rows={2}
-        columns={4}
-        items={items}
-        slotSize={80}
-        spacing={10}
-      /> */}
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}

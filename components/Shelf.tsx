@@ -1,11 +1,16 @@
+import { useEffect, useState } from "react";
+import { ObjectLoader } from "three";
 import shelf from "../assets/models/shelf.json";
+import { ShelfItem } from "../types/ShelfItem";
+import getModelConfig from "../utils/getModelConfig";
 
-export function JSONModel({
-  category = "cleanser",
-  spinnable = false,
-}: JSONModelProps) {
+export function Shelf({ data }: { data: ShelfItem[] }) {
+  return <ShelfModel />;
+}
+
+function ShelfModel() {
   const [object, setObject] = useState<THREE.Object3D | null>(null);
-  const config = getModelConfig(category);
+  const config = getModelConfig("cleanser");
 
   useEffect(() => {
     const loader = new ObjectLoader();
@@ -15,12 +20,5 @@ export function JSONModel({
 
   if (!object) return null;
 
-  return (
-    <JSONModelContent
-      object={object}
-      spinnable={spinnable}
-      scale={config.scale}
-      position={config.position}
-    />
-  );
+  return <primitive object={object} scale={1} position={[0, 0, 0]} />;
 }
