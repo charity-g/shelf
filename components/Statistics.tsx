@@ -57,7 +57,7 @@ export default function Statistics() {
   }
 
   return (
-    <View style={{ paddingTop: 50 }}>
+    <View style={{ marginTop: 50 }}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Product Statistics</Text>
         <Text style={styles.headerSubtitle}>
