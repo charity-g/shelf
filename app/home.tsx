@@ -2,24 +2,62 @@ import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import ShelfGrid from "@/components/ShelfGrid";
+import SpinnableShelf from "@/components/SpinnableShelf";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
+import { ShelfItem } from "../types/ShelfItem";
 
-const sampleImages = [
-  "https://via.placeholder.com/80x80.png?text=Item1",
-  "https://via.placeholder.com/80x80.png?text=Item2",
+export const carouselData: ShelfItem[] = [
+  {
+    category: "Cleanser",
+    ingredients: ["Water", "Glycerin", "Cocamidopropyl Betaine"],
+    brand: "Fresh Glow",
+  },
+  {
+    category: "Toner",
+    ingredients: ["Witch Hazel", "Aloe Vera", "Rose Water"],
+    brand: "Pure Essence",
+  },
+  {
+    category: "Exfoliant",
+    ingredients: ["Salicylic Acid", "Lactic Acid", "Jojoba Beads"],
+    brand: "SmoothSkin",
+  },
+  {
+    category: "Serum",
+    ingredients: ["Hyaluronic Acid", "Vitamin C", "Niacinamide"],
+    brand: "Radiance Labs",
+  },
+  {
+    category: "Moisturizer",
+    ingredients: ["Shea Butter", "Squalane", "Ceramides"],
+    brand: "HydraSoft",
+  },
+  {
+    category: "Sunscreen",
+    ingredients: ["Zinc Oxide", "Titanium Dioxide", "Aloe Vera"],
+    brand: "SunShield",
+  },
+  {
+    category: "Face Masks",
+    ingredients: ["Charcoal", "Kaolin Clay", "Green Tea Extract"],
+    brand: "GlowMask",
+  },
 ];
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [items, setItems] = useState(sampleImages);
+  const [items, setItems] = useState<ShelfItem[]>(carouselData);
 
   const addItem = () => {
     setItems((prev) => [
       ...prev,
-      `https://via.placeholder.com/80x80.png?text=Item${prev.length + 1}`,
+      {
+        category: "cleanser",
+        ingredients: ["Ingredient 1", "Ingredient 2"],
+        brand: "New Brand",
+      },
     ]);
     //TODO: call backend to add item or something
   };
@@ -27,13 +65,14 @@ export default function Home() {
 
   return (
     <Screen>
-      <ShelfGrid
+      <SpinnableShelf data={[]} />
+      {/* <ShelfGrid
         rows={2}
         columns={4}
         items={items}
         slotSize={80}
         spacing={10}
-      />
+      /> */}
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}

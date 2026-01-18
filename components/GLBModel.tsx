@@ -4,11 +4,25 @@ import { useRef } from "react";
 import { Box3, Group, Vector3 } from "three";
 
 interface GLBModelProps {
+  category?: keyof typeof categoricalMapping;
   spinnable?: boolean;
 }
 
-export default function GLBModel({ spinnable = false }: GLBModelProps) {
-  const gltf = useGLTF(require("../assets/models/cylinder.glb"));
+const categoricalMapping = {
+  cleanser: "../assets/models/cylinder.glb",
+  toner: "../assets/models/toner.glb",
+  exfoliant: "../assets/models/exfoliant.glb",
+  serum: "../assets/models/serum.glb",
+  moisturizer: "../assets/models/moisturizer.glb",
+  sunscreen: "../assets/models/sunscreen.glb",
+  faceMasks: "../assets/models/face_masks.glb",
+};
+
+export default function GLBModel({
+  category = "cleanser",
+  spinnable = false,
+}: GLBModelProps) {
+  const gltf = useGLTF(require(categoricalMapping[category.toLowerCase()]));
   const pivotRef = useRef<Group>(null);
 
   // Get the actual scene/mesh
