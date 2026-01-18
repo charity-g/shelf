@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-
+import { performOcr } from "../api/ocr";
 import { colors, typography } from "../styles/shared";
 
 type AddProductModalProps = {
@@ -61,23 +61,23 @@ export function AddProductModal({
         type: "image/jpeg",
       } as unknown as Blob);
 
-      const res = await fetch("http://128.189.150.85:3001/ocr", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const textResponse = await res.text();
-        console.error("Server error:", textResponse);
-        Alert.alert("Server error", textResponse);
-        return;
+      let data;
+      try {
+        data = await performOcr(formData);
+      } catch (err) {
+        console.error("Server error:", err);
+        Alert.alert(
+          "Server error",
+          err instanceof Error ? err.message : "Unknown error",
+        );
       }
-
-      const data = await res.json();
       setText(data.text || "No text detected");
     } catch (err) {
       console.error("Upload failed:", err);
-      Alert.alert("Error", err instanceof Error ? err.message : "Unknown error");
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Unknown error",
+      );
     }
   };
 
@@ -105,10 +105,7 @@ export function AddProductModal({
           </Pressable>
 
           {image && (
-            <Image
-              source={{ uri: image }}
-              style={styles.previewImage}
-            />
+            <Image source={{ uri: image }} style={styles.previewImage} />
           )}
 
           {text ? <Text style={styles.popupBody}>{text}</Text> : null}
