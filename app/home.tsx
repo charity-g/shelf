@@ -1,67 +1,84 @@
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import ShelfGrid from "@/components/ShelfGrid";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
+const sampleImages = [
+  "https://via.placeholder.com/80x80.png?text=Item1",
+  "https://via.placeholder.com/80x80.png?text=Item2",
+];
+
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [items, setItems] = useState(sampleImages);
+
+  const addItem = () => {
+    setItems((prev) => [
+      ...prev,
+      `https://via.placeholder.com/80x80.png?text=Item${prev.length + 1}`,
+    ]);
+    //TODO: call backend to add item or something
+  };
   const router = useRouter();
 
   return (
     <Screen>
+      <ShelfGrid
+        rows={2}
+        columns={4}
+        items={items}
+        slotSize={80}
+        spacing={10}
+      />
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onAdd={() => {
-          // TODO: open add flow
+          addItem(); //TODO add item info
         }}
       />
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Shelf</Text>
-        </View>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Shelf</Text>
+      </View>
 
-        <View style={styles.shelf} />
+      <View style={styles.shelf} />
 
+      <TouchableOpacity
+        style={styles.compareButton}
+        activeOpacity={0.8}
+        onPress={() => {
+          router.push("/compare" as Href);
+        }}
+      >
+        <View style={styles.compareIcon} />
+        <Text style={styles.compareText}>compare</Text>
+      </TouchableOpacity>
+
+      <View style={styles.actionRow}>
         <TouchableOpacity
-          style={styles.compareButton}
+          style={styles.actionButton}
           activeOpacity={0.8}
           onPress={() => {
-            router.push("/compare" as Href);
+            setIsAddOpen(true);
           }}
         >
-          <View style={styles.compareIcon} />
-          <Text style={styles.compareText}>compare</Text>
+          <Text style={styles.actionText}>add</Text>
         </TouchableOpacity>
-
-        <View style={styles.actionRow}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            activeOpacity={0.8}
-            onPress={() => {
-              setIsAddOpen(true);
-            }}
-          >
-            <Text style={styles.actionText}>add</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionButton}
-            activeOpacity={0.8}
-            onPress={() => {
-              router.push("/discover" as Href);
-            }}
-          >
-            <Text style={styles.actionText}>++</Text>
-            <Text style={styles.actionSubText}>recommend</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.actionButton}
+          activeOpacity={0.8}
+          onPress={() => {
+            router.push("/discover" as Href);
+          }}
+        >
+          <Text style={styles.actionText}>++</Text>
+          <Text style={styles.actionSubText}>recommend</Text>
+        </TouchableOpacity>
+      </View>
     </Screen>
   );
 }
