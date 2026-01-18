@@ -38,7 +38,7 @@ export default function GLBModel({
   });
 
   return (
-    <group ref={pivotRef} position={config.position}>
+    <group ref={pivotRef}>
       <primitive object={scene} scale={config.scale} />
     </group>
   );

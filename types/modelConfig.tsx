@@ -1,30 +1,34 @@
 interface ModelConfig {
   path: any;
   scale: number;
-  position?: [number, number, number];
+  position: [number, number, number];
 }
 
 const categoricalMapping: Record<string, ModelConfig> = {
   cleanser: {
     path: require("../assets/models/spray_bottle.glb"),
-    scale: 1.5,
-    position: [0, -0.5, 0],
+    scale: 3,
+    position: [0, 0, 6],
   },
   toner: {
     path: require("../assets/models/cylinder.glb"),
     scale: 2,
+    position: [0, 0, 3],
   },
   exfoliant: {
     path: require("../assets/models/cylinder.glb"),
     scale: 2,
+    position: [0, 0, 3],
   },
   serum: {
     path: require("../assets/models/cylinder.glb"),
     scale: 2,
+    position: [0, 0, 3],
   },
   moisturizer: {
     path: require("../assets/models/cylinder.glb"),
     scale: 2,
+    position: [0, 0, 3],
   },
   sunscreen: {
     path: require("../assets/models/spray_bottle.glb"),
@@ -34,6 +38,7 @@ const categoricalMapping: Record<string, ModelConfig> = {
   facemasks: {
     path: require("../assets/models/cylinder.glb"),
     scale: 2,
+    position: [0, 0, 3],
   },
 };
 
