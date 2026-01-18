@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
-import { Animated, Dimensions, StyleSheet } from "react-native";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
 import { colors } from "../styles/shared";
 
 const { width, height } = Dimensions.get("window");
@@ -55,26 +55,33 @@ export default function AuthPage({ children }: { children: React.ReactNode }) {
           ]}
         />
       </Animated.View>
+      <View style={styles.flexContainer}>
+        <Animated.Text
+          style={[
+            styles.brand,
+            {
+              position: "absolute",
+              top: 80,
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              opacity: fadeAnim,
+              transform: [
+                {
+                  translateY: fadeAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [20, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          shelf.
+        </Animated.Text>
 
-      <Animated.Text
-        style={[
-          styles.brand,
-          {
-            opacity: fadeAnim,
-            transform: [
-              {
-                translateY: fadeAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [20, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        shelf.
-      </Animated.Text>
-      {children}
+        <View style={{ marginTop: 150 }}>{children}</View>
+      </View>
     </Animated.View>
   );
 }
@@ -94,5 +101,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.text,
     letterSpacing: 2,
+  },
+  flexContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
 });
