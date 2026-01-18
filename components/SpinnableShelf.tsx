@@ -1,12 +1,6 @@
 import { Canvas } from "@react-three/fiber/native";
 import React, { Suspense } from "react";
-import {
-    Dimensions,
-    FlatList,
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { ShelfItem } from "../types/ShelfItem";
 import GLBModel from "./GLBModel";
 
@@ -33,7 +27,7 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
   }
 
   const renderItem = ({ item }: { item: ShelfItem }) => (
-    <View style={[styles.itemContainer, { width: width - 80 }]}>
+    <View style={[styles.itemContainer, { width: width - 120 }]}>
       <Text style={styles.category}>{item.category}</Text>
       <Text style={styles.brand}>{item.brand}</Text>
       <Text style={styles.ingredients}>
@@ -72,7 +66,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   itemContainer: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#ffffff",
     borderRadius: 10,
     padding: 20,
     marginHorizontal: 10,

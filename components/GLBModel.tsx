@@ -15,14 +15,20 @@ const categoricalMapping: Record<string, any> = {
   serum: require("../assets/models/cylinder.glb"),
   moisturizer: require("../assets/models/cylinder.glb"),
   sunscreen: require("../assets/models/spray_bottle.glb"),
-  faceMasks: require("../assets/models/cylinder.glb"),
+  facemasks: require("../assets/models/cylinder.glb"),
 };
+function getCategoricalMapping(category: string) {
+  if (category in categoricalMapping) {
+    return categoricalMapping[category];
+  }
+  return require("../assets/models/spray_bottle.glb");
+}
 
 export default function GLBModel({
   category = "cleanser",
   spinnable = false,
 }: GLBModelProps) {
-  const gltf = useGLTF(categoricalMapping[category.toLowerCase()]);
+  const gltf = useGLTF(getCategoricalMapping(category.toLowerCase()));
   const pivotRef = useRef<Group>(null);
 
   // Get the actual scene/mesh
