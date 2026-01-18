@@ -1,6 +1,6 @@
 import { useFrame } from "@react-three/fiber/native";
 import { useEffect, useRef } from "react";
-import { Group, ObjectLoader } from "three";
+import { Color, Group, ObjectLoader } from "three";
 import modelJson from "../assets/models/spray_bottle.json";
 
 interface JSONModelProps {
@@ -16,6 +16,16 @@ function JSONModelContent({
   spinnable: boolean;
 }) {
   const pivotRef = useRef<Group>(null);
+
+  useEffect(() => {
+    // Generate random color and apply to all materials
+    const randomColor = new Color(Math.random() * 0xffffff);
+    object.traverse((child: any) => {
+      if (child.isMesh && child.material) {
+        child.material.color.copy(randomColor);
+      }
+    });
+  }, [object]);
 
   useFrame(() => {
     if (spinnable && pivotRef.current) {
