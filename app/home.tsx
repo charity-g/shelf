@@ -41,8 +41,9 @@ export default function Home() {
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onAdd={(item) => {
-          addItem(item); //TODO add item info
+        onAdd={(item: UserProduct) => {
+          console.log("Adding item to shelf:", item);
+          addItem(item);
         }}
       />
       <View style={styles.container}>

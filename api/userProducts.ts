@@ -4,6 +4,7 @@ import {
   ProductsByCategory,
   SimilarProduct,
   UserProduct,
+  ocrExtractedProduct,
 } from "../types/UserProduct";
 import { apiRequest } from "./api";
 
@@ -48,26 +49,21 @@ export async function fetchUserProductsByUserId(
 /**
  * Create a new user product
  */
-export async function createUserProductText(product: {
-  user_id: string;
-  product_id: string;
-  product_desc?: string;
-  category?: string;
-  time_of_day?: string;
-  skin_type?: string;
-  name?: string;
-}) {
+export async function createUserProductText(
+  product: ocrExtractedProduct,
+): Promise<any> {
+  const userProduct: UserProduct = {
+    USER_ID: product.user_id,
+    PRODUCT_ID: product.product_id,
+    PRODUCT_DESC: product.product_desc,
+    CATEGORY: product.category,
+    TIME_OF_DAY: product.time_of_day,
+    SKIN_TYPE: product.skin_type,
+    NAME: product.name,
+  };
   return apiRequest("/user-products", {
     method: "POST",
-    body: JSON.stringify({
-      USER_ID: product.user_id,
-      PRODUCT_ID: product.product_id,
-      PRODUCT_DESC: product.product_desc,
-      CATEGORY: product.category,
-      TIME_OF_DAY: product.time_of_day,
-      SKIN_TYPE: product.skin_type,
-      NAME: product.name,
-    }),
+    body: JSON.stringify(userProduct),
   });
 }
 

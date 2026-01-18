@@ -19,7 +19,7 @@ import { auth } from "../utils/firebase";
 type AddProductModalProps = {
   visible: boolean;
   onClose: () => void;
-  onAdd?: () => void;
+  onAdd?: (response: any) => void;
 };
 
 type ProductData = OcrResponse["structuredData"];
@@ -141,7 +141,7 @@ export function AddProductModal({
       // Generate a unique product ID using timestamp + random string
       const productId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
-      await createUserProductText({
+      const response = await createUserProductText({
         user_id: userId,
         product_id: productId,
         name: productData.name,
@@ -152,7 +152,7 @@ export function AddProductModal({
       });
 
       Alert.alert("Success", `${productData.name} added to your shelf!`);
-      onAdd?.();
+      onAdd?.(response);
       handleClose();
     } catch (err) {
       console.error("Failed to add product:", err);

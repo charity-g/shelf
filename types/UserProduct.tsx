@@ -9,6 +9,16 @@ export interface UserProduct {
   INGREDIENTS?: string[];
 }
 
+export interface ocrExtractedProduct {
+  user_id: string;
+  product_id: string;
+  product_desc?: string;
+  category?: string;
+  time_of_day?: string;
+  skin_type?: string;
+  name?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
