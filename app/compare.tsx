@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -8,8 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { router } from "@/.expo/types/router";
 import {
   fetchProductDetails,
   fetchSimilarProducts,
@@ -31,7 +30,8 @@ export default function Compare() {
   const [similarProducts, setSimilarProducts] = useState<SimilarProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>("");
+  const router = useRouter();
 
   // Load user's products on mount
   useEffect(() => {

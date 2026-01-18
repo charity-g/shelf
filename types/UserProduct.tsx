@@ -31,3 +31,18 @@ export interface SimilarProduct {
   matchPercentage: number;
   sharedIngredients: string[];
 }
+
+export interface ProductsByCategory {
+  [category: string]: Product[];
+}
+
+// Categories to display
+export const CATEGORIES = [
+  "Cleanser",
+  "Toner",
+  "Exfoliant",
+  "Serum",
+  "Moisturizer",
+  "Sunscreen",
+  "Face Masks",
+];

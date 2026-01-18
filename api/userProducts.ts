@@ -1,6 +1,7 @@
 import {
   Product,
   ProductDetails,
+  ProductsByCategory,
   SimilarProduct,
   UserProduct,
 } from "../types/UserProduct";
@@ -350,4 +351,25 @@ export async function fetchSimilarProducts(
   };
 
   return mockSimilar[productId] || [];
+}
+
+export async function fetchProducts(): Promise<Product[]> {
+  try {
+    const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
+    return userProducts.map(transformUserProduct);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+}
+
+// Group products by category
+export function groupByCategory(products: Product[]): ProductsByCategory {
+  return products.reduce((acc, product) => {
+    if (!acc[product.category]) {
+      acc[product.category] = [];
+    }
+    acc[product.category].push(product);
+    return acc;
+  }, {} as ProductsByCategory);
 }
