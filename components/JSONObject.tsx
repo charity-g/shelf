@@ -1,7 +1,10 @@
 import { useFrame } from "@react-three/fiber/native";
 import { useEffect, useRef } from "react";
 import { Color, Group, ObjectLoader } from "three";
+import cream from "../assets/models/cream.json";
 import cylinder from "../assets/models/cylinder.json";
+import serum from "../assets/models/inverted_squeez_bootle.json";
+import lotion from "../assets/models/lotion.json";
 import spray from "../assets/models/spray_bottle.json";
 
 interface JSONModelProps {
@@ -72,7 +75,7 @@ const categoricalMapping: Record<string, ModelConfig> = {
     position: [0, 0, 6],
   },
   toner: {
-    obj: cylinder,
+    obj: lotion,
     scale: 2,
     position: [0, 0, 3],
   },
@@ -82,12 +85,12 @@ const categoricalMapping: Record<string, ModelConfig> = {
     position: [0, 0, 3],
   },
   serum: {
-    obj: cylinder,
+    obj: serum,
     scale: 2,
     position: [0, 0, 3],
   },
   moisturizer: {
-    obj: cylinder,
+    obj: lotion,
     scale: 2,
     position: [0, 0, 3],
   },
@@ -97,7 +100,7 @@ const categoricalMapping: Record<string, ModelConfig> = {
     position: [0, -0.5, 0],
   },
   facemasks: {
-    obj: spray,
+    obj: cream,
     scale: 2,
     position: [0, 0, 3],
   },
