@@ -1,6 +1,6 @@
 import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
 
@@ -26,4 +26,16 @@ export async function login(email: string, password: string) {
     password,
   );
   return userCredential.user;
+}
+
+function saveUserToLocalStorage(user: any) {
+  // Implement local storage saving logic here
+}
+
+function getUserFromLocalStorage() {
+  // Implement local storage retrieval logic here
+}
+
+function clearUserFromLocalStorage() {
+  // Implement local storage clearing logic here
 }
