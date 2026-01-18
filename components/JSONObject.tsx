@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ObjectLoader } from "three";
 import modelJson from "../assets/models/spray_bottle.json";
+// import modelJson from "../assets/models/cylinder.json";
 
 interface JSONModelProps {
   category?: string;
@@ -20,5 +21,5 @@ export function JSONModel({
   }, []);
 
   if (!object) return null;
-  return <primitive object={object} scale={2} position={[0, 0, 4]} />;
+  return <primitive object={object} scale={1} position={[0, 0, -5]} />;
 }
