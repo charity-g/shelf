@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: shelf-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+    # Add your Snowflake credentials in Render dashboard under Environment variables
+    # Don't commit secrets to this file!
