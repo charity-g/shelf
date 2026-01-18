@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -15,7 +16,7 @@ export async function signup(
     password,
   );
   const user = userCredential.user;
-
+  await saveUserToAsyncStorage(user);
   return user;
 }
 
@@ -25,17 +26,20 @@ export async function login(email: string, password: string) {
     email,
     password,
   );
+  await saveUserToAsyncStorage(userCredential.user);
   return userCredential.user;
 }
 
-function saveUserToLocalStorage(user: any) {
-  // Implement local storage saving logic here
+async function saveUserToAsyncStorage(user: any) {
+  await AsyncStorage.setItem("auth", JSON.stringify(user));
 }
 
-function getUserFromLocalStorage() {
-  // Implement local storage retrieval logic here
+export async function getUidFromAsyncStorage(): Promise<string | null> {
+  return AsyncStorage.getItem("auth").then((data) =>
+    data ? JSON.parse(data).uid : null,
+  );
 }
 
-function clearUserFromLocalStorage() {
-  // Implement local storage clearing logic here
+async function _clearUserFromAsyncStorage() {
+  await AsyncStorage.removeItem("auth");
 }
