@@ -1,22 +1,28 @@
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { OcrResponse, performOcr } from "../api/ocr";
+import { createUserProductText } from "../api/userProducts";
 import { colors, typography } from "../styles/shared";
+import { auth } from "../utils/firebase";
 
 type AddProductModalProps = {
   visible: boolean;
   onClose: () => void;
   onAdd?: () => void;
 };
+
+type ProductData = OcrResponse["structuredData"];
 
 export function AddProductModal({
   visible,
@@ -25,6 +31,9 @@ export function AddProductModal({
 }: AddProductModalProps) {
   const [image, setImage] = useState<string | null>(null);
   const [text, setText] = useState("");
+  const [productData, setProductData] = useState<ProductData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   // Ask for camera permissions on mount
@@ -53,13 +62,32 @@ export function AddProductModal({
   };
 
   const uploadImage = async (photo: ImagePicker.ImagePickerAsset) => {
+    setIsLoading(true);
     try {
+      console.log("Photo object:", JSON.stringify(photo, null, 2));
+      console.log("Platform:", Platform.OS);
+
       const formData = new FormData();
-      formData.append("image", {
-        uri: photo.uri,
-        name: "photo.jpg",
-        type: "image/jpeg",
-      } as unknown as Blob);
+
+      if (Platform.OS === "web") {
+        // On web, we need to fetch the blob from the URI
+        const response = await fetch(photo.uri);
+        const blob = await response.blob();
+        const fileName = photo.fileName || "photo.jpg";
+        const file = new File([blob], fileName, {
+          type: photo.mimeType || "image/jpeg",
+        });
+        formData.append("image", file);
+        console.log("Web: Appended file blob, size:", blob.size);
+      } else {
+        // On native (iOS/Android), use the object format
+        formData.append("image", {
+          uri: photo.uri,
+          name: photo.fileName || "photo.jpg",
+          type: photo.mimeType || "image/jpeg",
+        } as any);
+        console.log("Native: Appended file object");
+      }
 
       let data: OcrResponse;
       try {
@@ -67,6 +95,7 @@ export function AddProductModal({
         if (data.error || !data.structuredData) {
           throw new Error(data.error || "Failed to extract data from image.");
         }
+        setProductData(data.structuredData);
         setText(data.structuredData?.name || "No text detected");
       } catch (err) {
         console.error("Server error:", err);
@@ -81,16 +110,62 @@ export function AddProductModal({
         "Error",
         err instanceof Error ? err.message : "Unknown error",
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleClose = () => {
     setImage(null);
     setText("");
+    setProductData(null);
+    setIsLoading(false);
+    setIsSaving(false);
     onClose();
   };
 
-  const isReady = !!image;
+  const handleAddProduct = async () => {
+    if (!productData) {
+      Alert.alert("Error", "No product data available");
+      return;
+    }
+
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      Alert.alert("Error", "You must be logged in to add products");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Generate a unique product ID using timestamp + random string
+      const productId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+      await createUserProductText({
+        user_id: userId,
+        product_id: productId,
+        name: productData.name,
+        category: productData.type,
+        skin_type: productData.skinType,
+        time_of_day: productData.timeOfDay,
+        product_desc: productData.ingredients?.join(", "),
+      });
+
+      Alert.alert("Success", `${productData.name} added to your shelf!`);
+      onAdd?.();
+      handleClose();
+    } catch (err) {
+      console.error("Failed to add product:", err);
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Failed to add product",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const isReady = !!image && !!productData && !isLoading;
 
   return (
     <Modal
@@ -113,24 +188,49 @@ export function AddProductModal({
             <Image source={{ uri: image }} style={styles.previewImage} />
           )}
 
-          {text ? <Text style={styles.popupBody}>{text}</Text> : null}
+          {isLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={colors.text} />
+              <Text style={styles.loadingText}>Analyzing product...</Text>
+            </View>
+          )}
+
+          {text && !isLoading ? (
+            <Text style={styles.popupBody}>{text}</Text>
+          ) : null}
+
+          {productData && !isLoading && (
+            <View style={styles.productDetails}>
+              <Text style={styles.detailText}>Type: {productData.type}</Text>
+              <Text style={styles.detailText}>
+                Skin Type: {productData.skinType}
+              </Text>
+              <Text style={styles.detailText}>
+                Time: {productData.timeOfDay}
+              </Text>
+            </View>
+          )}
 
           <Pressable
             style={[
               styles.primaryButton,
-              !isReady && styles.primaryButtonDisabled,
+              (!isReady || isSaving) && styles.primaryButtonDisabled,
             ]}
-            onPress={isReady ? onAdd : undefined}
-            disabled={!isReady}
+            onPress={isReady && !isSaving ? handleAddProduct : undefined}
+            disabled={!isReady || isSaving}
           >
-            <Text
-              style={[
-                styles.primaryButtonText,
-                !isReady && styles.primaryButtonTextDisabled,
-              ]}
-            >
-              Put on Shelf
-            </Text>
+            {isSaving ? (
+              <ActivityIndicator size="small" color={colors.muted} />
+            ) : (
+              <Text
+                style={[
+                  styles.primaryButtonText,
+                  !isReady && styles.primaryButtonTextDisabled,
+                ]}
+              >
+                Put on Shelf
+              </Text>
+            )}
           </Pressable>
         </View>
       </View>
@@ -145,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   popup: {
-    height: "60%",
+    height: "80%",
     width: "100%",
     backgroundColor: colors.surface,
     paddingHorizontal: 20,
@@ -185,6 +285,26 @@ const styles = StyleSheet.create({
     width: 150,
     alignSelf: "center",
     borderRadius: 8,
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  loadingText: {
+    ...typography.body,
+    color: colors.muted,
+  },
+  productDetails: {
+    padding: 12,
+    backgroundColor: colors.line,
+    borderRadius: 8,
+  },
+  detailText: {
+    ...typography.body,
+    fontSize: 13,
+    marginBottom: 4,
   },
   primaryButton: {
     marginTop: "auto",

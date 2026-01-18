@@ -7,9 +7,14 @@ const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
  */
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
+
+  // Only set Content-Type for non-FormData requests
+  // FormData will automatically set the correct Content-Type with boundary
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (API_KEY) {
     headers["x-api-key"] = API_KEY;
