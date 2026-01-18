@@ -1,0 +1,111 @@
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef } from "react";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
+import { colors } from "../styles/shared";
+
+const { width, height } = Dimensions.get("window");
+const gradientSize = Math.max(width, height) * 6;
+
+export default function AuthPage({ children }: { children: React.ReactNode }) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const gradientAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Brand fade-in
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1800,
+      useNativeDriver: true,
+    }).start();
+
+    // Infinite gradient animation
+    Animated.loop(
+      Animated.timing(gradientAnim, {
+        toValue: 1,
+        duration: 6000,
+        useNativeDriver: false,
+      }),
+    ).start();
+  }, []);
+
+  const colorInterpolation = gradientAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  return (
+    <Animated.View style={styles.container}>
+      <Animated.View
+        style={{
+          transform: [{ rotate: colorInterpolation }],
+        }}
+      >
+        <LinearGradient
+          colors={[colors.subtle, colors.line, colors.text, "#91EAE4"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.gradient,
+            {
+              width: gradientSize,
+              height: gradientSize,
+              top: -gradientSize / 2,
+              left: -gradientSize / 2,
+            },
+          ]}
+        />
+      </Animated.View>
+      <View style={styles.flexContainer}>
+        <Animated.Text
+          style={[
+            styles.brand,
+            {
+              position: "absolute",
+              top: 80,
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              opacity: fadeAnim,
+              transform: [
+                {
+                  translateY: fadeAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [20, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          shelf.
+        </Animated.Text>
+
+        <View style={{ marginTop: 150 }}>{children}</View>
+      </View>
+    </Animated.View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    position: "absolute",
+  },
+  brand: {
+    position: "absolute",
+    alignSelf: "center",
+    top: height / 2 - 40,
+    fontSize: 42,
+    fontWeight: "700",
+    color: colors.text,
+    letterSpacing: 2,
+  },
+  flexContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+});

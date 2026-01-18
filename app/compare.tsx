@@ -9,9 +9,10 @@ import {
   View,
 } from "react-native";
 
+import { fetchUserProducts as fetchUserProductsFromAPI } from "../api/userProducts";
 import { Screen } from "../components/Screen";
-import { fetchUserProducts as fetchUserProductsFromAPI, UserProduct } from "../src/api/snowflake";
 import { colors, typography } from "../styles/shared";
+import { UserProduct } from "../types/UserProduct";
 
 // Types
 interface Product {
@@ -53,7 +54,9 @@ function transformUserProduct(userProduct: UserProduct): Product {
 // Fetch user's products from backend API
 async function fetchUserProducts(): Promise<Product[]> {
   try {
-    const userProducts = await fetchUserProductsFromAPI({ user_id: CURRENT_USER_ID });
+    const userProducts = await fetchUserProductsFromAPI({
+      user_id: CURRENT_USER_ID,
+    });
     return userProducts.map(transformUserProduct);
   } catch (error) {
     console.error("Error fetching user products:", error);
@@ -66,99 +69,200 @@ async function fetchProductDetails(productId: string): Promise<ProductDetails> {
   // In real implementation:
   // const response = await fetch(`${API_BASE}/products/${productId}/details`);
   // return response.json();
-  
+
   await new Promise((resolve) => setTimeout(resolve, 500));
-  
+
   const mockDetails: Record<string, ProductDetails> = {
     "1": {
       id: "1",
       name: "Gentle Foaming Cleanser",
       brand: "CeraVe",
       category: "Cleanser",
-      ingredients: ["Ceramides", "Hyaluronic Acid", "Niacinamide", "Glycerin", "Cholesterol"],
+      ingredients: [
+        "Ceramides",
+        "Hyaluronic Acid",
+        "Niacinamide",
+        "Glycerin",
+        "Cholesterol",
+      ],
     },
     "2": {
       id: "2",
       name: "Soy Face Cleanser",
       brand: "Fresh",
       category: "Cleanser",
-      ingredients: ["Soy Proteins", "Cucumber Extract", "Rose Water", "Aloe Vera", "Amino Acids"],
+      ingredients: [
+        "Soy Proteins",
+        "Cucumber Extract",
+        "Rose Water",
+        "Aloe Vera",
+        "Amino Acids",
+      ],
     },
     "3": {
       id: "3",
       name: "Facial Treatment Essence",
       brand: "SK-II",
       category: "Toner",
-      ingredients: ["Pitera", "Galactomyces Ferment Filtrate", "Butylene Glycol", "Sodium Benzoate"],
+      ingredients: [
+        "Pitera",
+        "Galactomyces Ferment Filtrate",
+        "Butylene Glycol",
+        "Sodium Benzoate",
+      ],
     },
     "4": {
       id: "4",
       name: "Hyaluronic Acid 2% + B5",
       brand: "The Ordinary",
       category: "Serum",
-      ingredients: ["Hyaluronic Acid", "Vitamin B5", "Sodium Hyaluronate", "Pentylene Glycol"],
+      ingredients: [
+        "Hyaluronic Acid",
+        "Vitamin B5",
+        "Sodium Hyaluronate",
+        "Pentylene Glycol",
+      ],
     },
     "5": {
       id: "5",
       name: "Niacinamide 10% + Zinc 1%",
       brand: "The Ordinary",
       category: "Serum",
-      ingredients: ["Niacinamide", "Zinc PCA", "Tamarindus Indica Seed Gum", "Isoceteth-20"],
+      ingredients: [
+        "Niacinamide",
+        "Zinc PCA",
+        "Tamarindus Indica Seed Gum",
+        "Isoceteth-20",
+      ],
     },
     "6": {
       id: "6",
       name: "Moisturizing Cream",
       brand: "CeraVe",
       category: "Moisturizer",
-      ingredients: ["Ceramides", "Hyaluronic Acid", "Petrolatum", "Glycerin", "Dimethicone"],
+      ingredients: [
+        "Ceramides",
+        "Hyaluronic Acid",
+        "Petrolatum",
+        "Glycerin",
+        "Dimethicone",
+      ],
     },
     "7": {
       id: "7",
       name: "UV Aqua Rich Watery Essence",
       brand: "Biore",
       category: "Sunscreen",
-      ingredients: ["Octinoxate", "Zinc Oxide", "Hyaluronic Acid", "Royal Jelly Extract", "Citrus Extract"],
+      ingredients: [
+        "Octinoxate",
+        "Zinc Oxide",
+        "Hyaluronic Acid",
+        "Royal Jelly Extract",
+        "Citrus Extract",
+      ],
     },
   };
-  
+
   return mockDetails[productId] || mockDetails["1"];
 }
 
 // Placeholder endpoint: Get similar products from user's collection
-async function fetchSimilarProducts(productId: string): Promise<SimilarProduct[]> {
+async function fetchSimilarProducts(
+  productId: string,
+): Promise<SimilarProduct[]> {
   // In real implementation:
   // const response = await fetch(`${API_BASE}/products/${productId}/similar`);
   // return response.json();
-  
+
   await new Promise((resolve) => setTimeout(resolve, 600));
-  
+
   const mockSimilar: Record<string, SimilarProduct[]> = {
     "1": [
-      { id: "2", name: "Soy Face Cleanser", brand: "Fresh", matchPercentage: 72, sharedIngredients: ["Glycerin", "Amino Acids"] },
-      { id: "6", name: "Moisturizing Cream", brand: "CeraVe", matchPercentage: 85, sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"] },
+      {
+        id: "2",
+        name: "Soy Face Cleanser",
+        brand: "Fresh",
+        matchPercentage: 72,
+        sharedIngredients: ["Glycerin", "Amino Acids"],
+      },
+      {
+        id: "6",
+        name: "Moisturizing Cream",
+        brand: "CeraVe",
+        matchPercentage: 85,
+        sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"],
+      },
     ],
     "2": [
-      { id: "1", name: "Gentle Foaming Cleanser", brand: "CeraVe", matchPercentage: 72, sharedIngredients: ["Glycerin", "Amino Acids"] },
+      {
+        id: "1",
+        name: "Gentle Foaming Cleanser",
+        brand: "CeraVe",
+        matchPercentage: 72,
+        sharedIngredients: ["Glycerin", "Amino Acids"],
+      },
     ],
     "3": [
-      { id: "4", name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", matchPercentage: 45, sharedIngredients: ["Butylene Glycol"] },
+      {
+        id: "4",
+        name: "Hyaluronic Acid 2% + B5",
+        brand: "The Ordinary",
+        matchPercentage: 45,
+        sharedIngredients: ["Butylene Glycol"],
+      },
     ],
     "4": [
-      { id: "6", name: "Moisturizing Cream", brand: "CeraVe", matchPercentage: 78, sharedIngredients: ["Hyaluronic Acid", "Glycerin"] },
-      { id: "7", name: "UV Aqua Rich Watery Essence", brand: "Biore", matchPercentage: 55, sharedIngredients: ["Hyaluronic Acid"] },
+      {
+        id: "6",
+        name: "Moisturizing Cream",
+        brand: "CeraVe",
+        matchPercentage: 78,
+        sharedIngredients: ["Hyaluronic Acid", "Glycerin"],
+      },
+      {
+        id: "7",
+        name: "UV Aqua Rich Watery Essence",
+        brand: "Biore",
+        matchPercentage: 55,
+        sharedIngredients: ["Hyaluronic Acid"],
+      },
     ],
     "5": [
-      { id: "1", name: "Gentle Foaming Cleanser", brand: "CeraVe", matchPercentage: 68, sharedIngredients: ["Niacinamide"] },
+      {
+        id: "1",
+        name: "Gentle Foaming Cleanser",
+        brand: "CeraVe",
+        matchPercentage: 68,
+        sharedIngredients: ["Niacinamide"],
+      },
     ],
     "6": [
-      { id: "1", name: "Gentle Foaming Cleanser", brand: "CeraVe", matchPercentage: 85, sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"] },
-      { id: "4", name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", matchPercentage: 78, sharedIngredients: ["Hyaluronic Acid", "Glycerin"] },
+      {
+        id: "1",
+        name: "Gentle Foaming Cleanser",
+        brand: "CeraVe",
+        matchPercentage: 85,
+        sharedIngredients: ["Ceramides", "Hyaluronic Acid", "Glycerin"],
+      },
+      {
+        id: "4",
+        name: "Hyaluronic Acid 2% + B5",
+        brand: "The Ordinary",
+        matchPercentage: 78,
+        sharedIngredients: ["Hyaluronic Acid", "Glycerin"],
+      },
     ],
     "7": [
-      { id: "4", name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", matchPercentage: 55, sharedIngredients: ["Hyaluronic Acid"] },
+      {
+        id: "4",
+        name: "Hyaluronic Acid 2% + B5",
+        brand: "The Ordinary",
+        matchPercentage: 55,
+        sharedIngredients: ["Hyaluronic Acid"],
+      },
     ],
   };
-  
+
   return mockSimilar[productId] || [];
 }
 
@@ -167,7 +271,9 @@ export default function Compare() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [productDetails, setProductDetails] = useState<ProductDetails | null>(null);
+  const [productDetails, setProductDetails] = useState<ProductDetails | null>(
+    null,
+  );
   const [similarProducts, setSimilarProducts] = useState<SimilarProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
@@ -195,7 +301,7 @@ export default function Compare() {
       const filtered = products.filter(
         (p) =>
           p.name.toLowerCase().includes(query) ||
-          p.brand.toLowerCase().includes(query)
+          p.brand.toLowerCase().includes(query),
       );
       setFilteredProducts(filtered);
     }
@@ -240,7 +346,10 @@ export default function Compare() {
 
   return (
     <Screen>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Search Section */}
         {!selectedProduct && (
           <View style={styles.searchSection}>
@@ -310,12 +419,16 @@ export default function Compare() {
                 {/* Ingredients */}
                 {productDetails && (
                   <View style={styles.ingredientsSection}>
-                    <Text style={styles.sectionTitle}>This product contains:</Text>
+                    <Text style={styles.sectionTitle}>
+                      This product contains:
+                    </Text>
                     <View style={styles.ingredients}>
                       {productDetails.ingredients.map((ingredient, index) => (
                         <View key={index} style={styles.ingredientRow}>
                           <View style={styles.ingredientBullet} />
-                          <Text style={styles.ingredientText}>{ingredient}</Text>
+                          <Text style={styles.ingredientText}>
+                            {ingredient}
+                          </Text>
                         </View>
                       ))}
                     </View>
@@ -324,9 +437,13 @@ export default function Compare() {
 
                 {/* Similar Products */}
                 <View style={styles.similarSection}>
-                  <Text style={styles.sectionTitle}>Your similar products:</Text>
+                  <Text style={styles.sectionTitle}>
+                    Your similar products:
+                  </Text>
                   {similarProducts.length === 0 ? (
-                    <Text style={styles.emptyText}>No similar products found in your collection</Text>
+                    <Text style={styles.emptyText}>
+                      No similar products found in your collection
+                    </Text>
                   ) : (
                     <View style={styles.similarList}>
                       {similarProducts.map((similar) => (
@@ -334,15 +451,23 @@ export default function Compare() {
                           <View style={styles.similarHeader}>
                             <View style={styles.similarIcon} />
                             <View style={styles.similarInfo}>
-                              <Text style={styles.similarName}>{similar.name}</Text>
-                              <Text style={styles.similarBrand}>{similar.brand}</Text>
+                              <Text style={styles.similarName}>
+                                {similar.name}
+                              </Text>
+                              <Text style={styles.similarBrand}>
+                                {similar.brand}
+                              </Text>
                             </View>
                             <View style={styles.matchBadge}>
-                              <Text style={styles.matchText}>{similar.matchPercentage}%</Text>
+                              <Text style={styles.matchText}>
+                                {similar.matchPercentage}%
+                              </Text>
                             </View>
                           </View>
                           <View style={styles.sharedIngredients}>
-                            <Text style={styles.sharedLabel}>Shared ingredients:</Text>
+                            <Text style={styles.sharedLabel}>
+                              Shared ingredients:
+                            </Text>
                             <Text style={styles.sharedList}>
                               {similar.sharedIngredients.join(", ")}
                             </Text>

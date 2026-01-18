@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-
+import { OcrResponse, performOcr } from "../api/ocr";
 import { colors, typography } from "../styles/shared";
 
 type AddProductModalProps = {
@@ -61,23 +61,26 @@ export function AddProductModal({
         type: "image/jpeg",
       } as unknown as Blob);
 
-      const res = await fetch("http://128.189.150.85:3001/ocr", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const textResponse = await res.text();
-        console.error("Server error:", textResponse);
-        Alert.alert("Server error", textResponse);
-        return;
+      let data: OcrResponse;
+      try {
+        data = await performOcr(formData);
+        if (data.error || !data.structuredData) {
+          throw new Error(data.error || "Failed to extract data from image.");
+        }
+        setText(data.structuredData?.name || "No text detected");
+      } catch (err) {
+        console.error("Server error:", err);
+        Alert.alert(
+          "Server error",
+          err instanceof Error ? err.message : "Unknown error",
+        );
       }
-
-      const data = await res.json();
-      setText(data.text || "No text detected");
     } catch (err) {
       console.error("Upload failed:", err);
-      Alert.alert("Error", err instanceof Error ? err.message : "Unknown error");
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Unknown error",
+      );
     }
   };
 
@@ -86,6 +89,8 @@ export function AddProductModal({
     setText("");
     onClose();
   };
+
+  const isReady = !!image;
 
   return (
     <Modal
@@ -105,16 +110,27 @@ export function AddProductModal({
           </Pressable>
 
           {image && (
-            <Image
-              source={{ uri: image }}
-              style={styles.previewImage}
-            />
+            <Image source={{ uri: image }} style={styles.previewImage} />
           )}
 
           {text ? <Text style={styles.popupBody}>{text}</Text> : null}
 
-          <Pressable style={styles.primaryButton} onPress={onAdd}>
-            <Text style={styles.primaryButtonText}>Add Product</Text>
+          <Pressable
+            style={[
+              styles.primaryButton,
+              !isReady && styles.primaryButtonDisabled,
+            ]}
+            onPress={isReady ? onAdd : undefined}
+            disabled={!isReady}
+          >
+            <Text
+              style={[
+                styles.primaryButtonText,
+                !isReady && styles.primaryButtonTextDisabled,
+              ]}
+            >
+              Put on Shelf
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -177,10 +193,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.text,
   },
+  primaryButtonDisabled: {
+    backgroundColor: colors.line,
+  },
   primaryButtonText: {
     color: colors.surface,
     fontSize: 14,
     textTransform: "uppercase",
     letterSpacing: 1,
+  },
+  primaryButtonTextDisabled: {
+    color: colors.muted,
   },
 });

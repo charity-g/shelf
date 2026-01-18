@@ -1,27 +1,43 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { Href, useRouter } from "expo-router";
-import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { Shelf } from "@/components/Shelf";
+import SpinnableShelf from "@/components/SpinnableShelf";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
+import { UserProduct } from "@/types/UserProduct";
+import { fetchUserProducts } from "../api/userProducts";
+
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [items, setItems] = useState<UserProduct[]>([]);
+
+  useEffect(() => {
+    const loadItems = async () => {
+      const products = await fetchUserProducts();
+      setItems(products);
+    };
+    loadItems();
+  }, []);
+
+  const addItem = (item: {}) => {
+    setItems((prev) => [...prev]); //TODO: call backend to add item or something
+  };
   const router = useRouter();
 
   return (
     <Screen>
+      <Shelf data={items}></Shelf>
+      <SpinnableShelf data={items} />
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onAdd={() => {
-          // TODO: open add flow
+        onAdd={(item) => {
+          addItem(item); //TODO add item info
         }}
       />
       <View style={styles.container}>
@@ -36,7 +52,14 @@ export default function Home() {
               router.push("/compare" as Href);
             }}
           >
-            <Text style={styles.compareText}>Compare</Text>
+            <LinearGradient
+              colors={[colors.accentSoft, colors.accent]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.compareGradient}
+            >
+              <Text style={styles.compareText}>Compare</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
           <View style={styles.actionRow}>
@@ -91,25 +114,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     alignSelf: "center",
     minWidth: 160,
     justifyContent: "center",
-    backgroundColor: colors.accentSoft,
-    borderWidth: 1,
-    borderColor: colors.line,
     shadowColor: colors.shadow,
     shadowOpacity: 0.18,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     elevation: 3,
+    overflow: "hidden",
   },
-  compareIcon: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: colors.accent,
+  compareGradient: {
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   compareText: {
     fontSize: 14,
