@@ -1,6 +1,7 @@
 import cream from "../assets/models/cream.json";
 import cylinder from "../assets/models/cylinder.json";
 import lotion from "../assets/models/lotion.json";
+import serum from "../assets/models/serum.json";
 import spray from "../assets/models/spray_bottle.json";
 
 interface ModelConfig {
