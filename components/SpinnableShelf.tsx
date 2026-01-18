@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber/native";
+import React, { Suspense, useState } from "react";
 import {
     Dimensions,
     FlatList,
@@ -8,9 +9,24 @@ import {
     View,
 } from "react-native";
 import { ShelfItem } from "../types/ShelfItem";
+import GLBModel from "./GLBModel";
 
 // Get device width for carousel sizing
 const { width } = Dimensions.get("window");
+
+const SpinnableShelfItemView = ({ category }: { category: string }) => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <Suspense fallback={null}>
+          <GLBModel category={category} spinnable={true} />
+        </Suspense>
+      </Canvas>
+    </View>
+  );
+};
 
 const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,6 +64,8 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
           <Text style={styles.arrowText}>◀</Text>
         </TouchableOpacity>
       )}
+
+      <SpinnableShelfItemView category={data[currentIndex].category} />
 
       <FlatList
         data={[data[currentIndex]]} // Show only the current item

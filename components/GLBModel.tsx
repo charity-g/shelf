@@ -4,18 +4,18 @@ import { useRef } from "react";
 import { Box3, Group, Vector3 } from "three";
 
 interface GLBModelProps {
-  category?: keyof typeof categoricalMapping;
+  category?: string;
   spinnable?: boolean;
 }
 
-const categoricalMapping = {
+const categoricalMapping: Record<string, any> = {
   cleanser: require("../assets/models/cylinder.glb"),
-  toner: require("../assets/models/toner.glb"),
-  exfoliant: require("../assets/models/exfoliant.glb"),
-  serum: require("../assets/models/serum.glb"),
-  moisturizer: require("../assets/models/moisturizer.glb"),
-  sunscreen: require("../assets/models/sunscreen.glb"),
-  faceMasks: require("../assets/models/face_masks.glb"),
+  toner: require("../assets/models/cylinder.glb"),
+  exfoliant: require("../assets/models/cylinder.glb"),
+  serum: require("../assets/models/cylinder.glb"),
+  moisturizer: require("../assets/models/cylinder.glb"),
+  sunscreen: require("../assets/models/cylinder.glb"),
+  faceMasks: require("../assets/models/cylinder.glb"),
 };
 
 export default function GLBModel({
