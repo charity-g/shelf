@@ -16,8 +16,8 @@ Skincare is shrouded in marketing and complex chemistry. Most consumers don't kn
 shelf. is an intelligent skincare auditor that decodes your regimen. By analyzing the chemical composition of your products, it transforms a cluttered bathroom vanity into a simple complete routine
 
 Features:
-- We translate "enigmatic" chemical names into plain English. The app categorizes ingredients by their functional purpose (e.g., humectants, exfoliants, antioxidants).
-- Before you buy that new viral cream, shelf. scans the ingredients. If you already own a product with a 90% bio-similarity or the same primary function, the app warns you of the "Redundant Buy."
+- We translate enigmatic chemical names into plain English. The app categorizes ingredients by their functional purpose (e.g., humectants, exfoliants, antioxidants).
+- Before you buy that new viral cream, shelf. scans the ingredients. If you already own a product with similar ingredients or the same primary function, the app warns you of the redundant buy.
 - Instead of suggesting more products, shelf. identifies what your routine is actually missing (e.g., "You have three hydrators, but no SPF").
 
 ## How we built it
@@ -50,4 +50,4 @@ Smart Replacements: Instead of just suggesting "you need a Vitamin C," shelf. wi
 
 Conflict Detection: Adding "Routine Safety" alerts to warn users if they are mixing ingredients that shouldn't go together (like Retinol and AHA acids).
 
-Community De-influencing: A social feature where users can share their "Minimalist Shelves" to inspire others to buy less and use better.
+Community De-influencing: A social feature where users can share their Minimalist Shelves to inspire others to buy less and use better.
