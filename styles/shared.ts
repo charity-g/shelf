@@ -1,13 +1,17 @@
 import { StyleSheet } from "react-native";
 
 export const colors = {
-  background: "#f5f5f5",
-  surface: "#fff",
-  text: "#111",
-  muted: "#666",
-  line: "#d7d7d7",
-  subtle: "#f2f2f2",
-  shadow: "rgba(17, 17, 17, 0.12)",
+  background: "#fff1f6",
+  surface: "#ffffff",
+  text: "#5a3d5c",
+  muted: "#8a6e8c",
+  line: "#f3c2d9",
+  subtle: "#ffe6f1",
+  accent: "#ff9ec9",
+  accentSoft: "#ffd1e6",
+  lavender: "#e6d8ff",
+  mint: "#dff7f1",
+  shadow: "rgba(90, 61, 92, 0.18)",
 };
 
 export const layout = StyleSheet.create({
@@ -15,31 +19,42 @@ export const layout = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     alignItems: "center",
-    justifyContent: "center",
-    padding: 8,
+    paddingHorizontal: 30,
+    paddingTop: 4,
+    paddingBottom: 30,
   },
   surface: {
-    width: "92%",
+    flex: 1,
+    width: "100%",
     maxWidth: 360,
-    aspectRatio: 9 / 16,
     backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 14,
     gap: 14,
+    borderWidth: 1,
+    borderColor: colors.line,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
   },
 });
 
 export const typography = StyleSheet.create({
   titleCaps: {
-    fontSize: 14,
-    letterSpacing: 1,
+    fontSize: 15,
+    letterSpacing: 1.2,
     color: colors.text,
     textTransform: "uppercase",
+    fontWeight: "600",
   },
   sectionTitle: {
     fontSize: 12,
-    color: colors.text,
+    color: colors.muted,
+    letterSpacing: 0.8,
     textTransform: "uppercase",
+    fontWeight: "600",
   },
   body: {
     fontSize: 12,
