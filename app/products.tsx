@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
+import { fetchUserProducts } from "../api/userProducts";
 import { Screen } from "../components/Screen";
-import { fetchUserProducts, UserProduct } from "../src/api/snowflake";
 import { colors, typography } from "../styles/shared";
+import { UserProduct } from "../types/UserProduct";
 
 // Product type definition
 interface Product {
@@ -41,15 +48,14 @@ function transformUserProduct(userProduct: UserProduct): Product {
   };
 }
 
-
-  async function fetchProducts(): Promise<Product[]> {
-    try {
-      const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
-      return userProducts.map(transformUserProduct);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      throw error;
-    }
+async function fetchProducts(): Promise<Product[]> {
+  try {
+    const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
+    return userProducts.map(transformUserProduct);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
 }
 
 // Group products by category
@@ -107,7 +113,10 @@ export default function Products() {
 
   return (
     <Screen>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {CATEGORIES.map((category) => (
           <View key={category} style={styles.section}>
             <Text style={styles.sectionTitle}>{category}</Text>
