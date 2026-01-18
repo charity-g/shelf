@@ -1,17 +1,19 @@
 import { UserProduct } from "@/types/UserProduct";
 import { Canvas } from "@react-three/fiber/native";
 import { Suspense, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Dimensions } from "react-native";
 import { ObjectLoader } from "three";
 import shelf from "../assets/models/shelf.json";
 import getModelConfig from "../utils/getModelConfig";
 import { JSONModel } from "./JSONObject";
 import SpinnableShelf from "./SpinnableShelf";
 
+const { height } = Dimensions.get("window");
+
 export function Shelf({ data }: { data: UserProduct[] }) {
   const [currItemIndex, setCurrItemIndex] = useState(0);
   return (
-    <View>
+    <>
       <Canvas camera={{ position: [0, 10, 14] }}>
         <ambientLight intensity={1} />
         <directionalLight position={[5, 5, 5]} />
@@ -25,19 +27,18 @@ export function Shelf({ data }: { data: UserProduct[] }) {
                 category={item.CATEGORY}
                 spinnable={false}
                 scaleMultiplier={2}
-                position={[x - 2 * data.length + index * 3, y + 2, z]}
+                position={[x - 2 * data.length + index * 2.8, y + 2, z]}
               />
             </Suspense>
           );
         })}
       </Canvas>
-
       <SpinnableShelf
         data={data}
         currItemIndex={currItemIndex}
         setCurrItemIndex={setCurrItemIndex}
       />
-    </View>
+    </>
   );
 }
 

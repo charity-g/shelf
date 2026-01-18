@@ -13,7 +13,6 @@ import { getUserFromAsyncStorage } from "../services/auth";
 
 async function fetchProfile(): Promise<ProfileData> {
   const user = await getUserFromAsyncStorage();
-  console.log("Fetching profile data... firebase user", user);
   return {
     user: {
       name: user.displayName || "New User",
