@@ -18,7 +18,8 @@ export default function Home() {
 
   useEffect(() => {
     const loadItems = async () => {
-      const products = await fetchUserProducts();
+      const userId = await getUidFromAsyncStorage();
+      if (!userId) const products = await fetchUserProducts();
       setItems(products);
     };
     loadItems();

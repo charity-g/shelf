@@ -8,3 +8,26 @@ export interface UserProduct {
   NAME?: string;
   INGREDIENTS?: string[];
 }
+
+export interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+}
+
+export interface ProductDetails {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  ingredients: string[];
+}
+
+export interface SimilarProduct {
+  id: string;
+  name: string;
+  brand: string;
+  matchPercentage: number;
+  sharedIngredients: string[];
+}
