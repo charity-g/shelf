@@ -1,6 +1,10 @@
 import { useGLTF } from "@react-three/drei/native";
 
-export default function GLBModel() {
+interface GLBModelProps {
+  spinnable: boolean;
+}
+
+export default function GLBModel({ spinnable }: GLBModelProps) {
   const gltf = useGLTF(require("../assets/models/cylinder.glb"));
 
   // Handle both single GLTF object and array of GLTF objects
