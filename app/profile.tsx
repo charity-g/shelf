@@ -38,8 +38,8 @@ async function fetchProfile(): Promise<ProfileData> {
   const mockProfileData: ProfileData = {
     user: {
       id: "user_001",
-      name: "First Last",
-      email: "firstlast@email.com",
+      name: "Bob Bob",
+      email: "bob@gmail.com",
       avatarUrl: "https://api.example.com/avatars/user_001.jpg",
       skinType: "Combination",
       joinedDate: "2024-03-15",
