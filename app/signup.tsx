@@ -2,11 +2,11 @@ import AuthPage from "@/components/AuthPage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { signup } from "../services/auth";
 
@@ -77,56 +77,60 @@ export default function SignUpScreen() {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.loginLink}
-        onPress={() => router.back()} // Navigate back
-        disabled={loading}
-      >
-        <Text style={styles.loginText}>Already have an account? Log in</Text>
+      <Text style={styles.footerText}>Already have an account?</Text>
+
+      <TouchableOpacity onPress={() => router.back()}>
+        <Text style={styles.loginLink}>Log in</Text>
       </TouchableOpacity>
     </AuthPage>
   );
 }
 
+const INPUT_WIDTH = 320;
+
 const styles = StyleSheet.create({
-  logo: {
-    width: 200,
-    height: 100,
-    resizeMode: "contain",
-    marginBottom: 20,
-  },
   input: {
-    width: "80%",
-    height: 50,
+    width: INPUT_WIDTH,
+    height: 52,
     backgroundColor: "#fff",
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 14,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#ddd",
+    fontSize: 16,
   },
+
   button: {
-    width: "80%",
-    backgroundColor: "#00a86b",
-    padding: 16,
-    borderRadius: 10,
+    width: INPUT_WIDTH,
+    height: 52,
+    backgroundColor: "#FF8DA1",
+    borderRadius: 12,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
   },
+
   buttonDisabled: {
     opacity: 0.6,
   },
+
   buttonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "600",
   },
+
+  footerText: {
+    marginTop: 20,
+    fontSize: 14,
+    color: "#555",
+  },
+
   loginLink: {
-    marginTop: 16,
-  },
-  loginText: {
-    textDecorationLine: "underline",
-    color: "#333",
-    fontSize: 15,
+    marginTop: 6,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FF8DA1",
   },
 });

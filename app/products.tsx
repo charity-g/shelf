@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -8,6 +9,7 @@ import {
 } from "react-native";
 import { fetchProducts, groupByCategory } from "../api/userProducts";
 import { Screen } from "../components/Screen";
+import { getUidFromAsyncStorage } from "../services/auth";
 import { colors, typography } from "../styles/shared";
 import { CATEGORIES, ProductsByCategory } from "../types/UserProduct";
 
@@ -15,12 +17,20 @@ export default function Products() {
   const [products, setProducts] = useState<ProductsByCategory>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
     async function loadProducts() {
       try {
         setLoading(true);
-        const data = await fetchProducts();
+        const userId = await getUidFromAsyncStorage();
+        if (!userId) {
+          router.replace("/");
+        } else {
+          setUserId(userId);
+        }
+        const data = await fetchProducts(userId);
         setProducts(groupByCategory(data));
       } catch (err) {
         setError("Failed to load products");

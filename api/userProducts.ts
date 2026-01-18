@@ -134,7 +134,7 @@ export async function fetchUserProductsByUser(
   currentUserId: string,
 ): Promise<Product[]> {
   try {
-    const userProducts = await fetchUserProductsFromAPI({
+    const userProducts = await fetchUserProducts({
       user_id: currentUserId,
     });
     return userProducts.map(transformUserProduct);
@@ -350,9 +350,9 @@ export async function fetchSimilarProducts(
   return mockSimilar[productId] || [];
 }
 
-export async function fetchProducts(): Promise<Product[]> {
+export async function fetchProducts(userId: string): Promise<Product[]> {
   try {
-    const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
+    const userProducts = await fetchUserProducts({ user_id: userId });
     return userProducts.map(transformUserProduct);
   } catch (error) {
     console.error("Error fetching products:", error);

@@ -40,6 +40,12 @@ export async function getUidFromAsyncStorage(): Promise<string | null> {
   );
 }
 
+export async function getUserFromAsyncStorage(): Promise<any | null> {
+  return AsyncStorage.getItem("auth").then((data) =>
+    data ? JSON.parse(data) : null,
+  );
+}
+
 async function _clearUserFromAsyncStorage() {
   await AsyncStorage.removeItem("auth");
 }
