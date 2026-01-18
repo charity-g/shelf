@@ -8,60 +8,16 @@ import SpinnableShelf from "@/components/SpinnableShelf";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
-import { ShelfItem } from "../types/ShelfItem";
 
-export const carouselData: ShelfItem[] = [
-  {
-    category: "Cleanser",
-    ingredients: ["Water", "Glycerin", "Cocamidopropyl Betaine"],
-    brand: "Fresh Glow",
-  },
-  {
-    category: "Toner",
-    ingredients: ["Witch Hazel", "Aloe Vera", "Rose Water"],
-    brand: "Pure Essence",
-  },
-  {
-    category: "Exfoliant",
-    ingredients: ["Salicylic Acid", "Lactic Acid", "Jojoba Beads"],
-    brand: "SmoothSkin",
-  },
-  {
-    category: "Serum",
-    ingredients: ["Hyaluronic Acid", "Vitamin C", "Niacinamide"],
-    brand: "Radiance Labs",
-  },
-  {
-    category: "Moisturizer",
-    ingredients: ["Shea Butter", "Squalane", "Ceramides"],
-    brand: "HydraSoft",
-  },
-  {
-    category: "Sunscreen",
-    ingredients: ["Zinc Oxide", "Titanium Dioxide", "Aloe Vera"],
-    brand: "SunShield",
-  },
-  {
-    category: "Face Masks",
-    ingredients: ["Charcoal", "Kaolin Clay", "Green Tea Extract"],
-    brand: "GlowMask",
-  },
-];
+import { UserProduct } from "@/types/UserProduct";
+import { fetchUserProducts } from "../src/api/snowflake";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [items, setItems] = useState<ShelfItem[]>(carouselData);
+  const [items, setItems] = useState<UserProduct[]>(fetchUserProducts());
 
-  const addItem = () => {
-    setItems((prev) => [
-      ...prev,
-      {
-        category: "cleanser",
-        ingredients: ["Ingredient 1", "Ingredient 2"],
-        brand: "New Brand",
-      },
-    ]);
-    //TODO: call backend to add item or something
+  const addItem = (item: {}) => {
+    setItems((prev) => [...prev]); //TODO: call backend to add item or something
   };
   const router = useRouter();
 
@@ -72,8 +28,8 @@ export default function Home() {
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onAdd={() => {
-          addItem(); //TODO add item info
+        onAdd={(item) => {
+          addItem(item); //TODO add item info
         }}
       />
       <View style={styles.container}>

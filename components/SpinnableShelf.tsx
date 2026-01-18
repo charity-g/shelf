@@ -1,19 +1,19 @@
 import { Canvas } from "@react-three/fiber/native";
-import React, { Suspense, useCallback, useRef, useState } from "react";
+import React, { Suspense, useRef, useState } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
-import { ShelfItem } from "../types/ShelfItem";
+import { UserProduct } from "../types/UserProduct";
 import { JSONModel } from "./JSONObject";
 
 // Get device width for carousel sizing
 const { width } = Dimensions.get("window");
 
-const SpinnableShelfItem = ({ item }: { item: ShelfItem }) => {
+const SpinnableShelfItem = ({ item }: { item: UserProduct }) => {
   return (
     <View style={[styles.itemContainer, { width: width - 120 }]}>
-      <Text style={styles.category}>{item.category}</Text>
-      <Text style={styles.brand}>{item.brand}</Text>
+      <Text style={styles.category}>{item.CATEGORY}</Text>
+      <Text style={styles.brand}>{item.NAME}</Text>
       <Text style={styles.ingredients}>
-        Ingredients: {item.ingredients.join(", ")}
+        Ingredients: {item.INGREDIENTS?.join(", ")}
       </Text>
 
       <View style={{ height: 200 }}>
@@ -21,7 +21,7 @@ const SpinnableShelfItem = ({ item }: { item: ShelfItem }) => {
           <ambientLight intensity={0.6} />
           <directionalLight position={[5, 5, 5]} intensity={1} />
           <Suspense fallback={null}>
-            <JSONModel category={item.category} spinnable={true} />
+            <JSONModel category={item.CATEGORY} spinnable={true} />
           </Suspense>
         </Canvas>
       </View>
@@ -29,12 +29,12 @@ const SpinnableShelfItem = ({ item }: { item: ShelfItem }) => {
   );
 };
 
-const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
+const SpinnableShelf = ({ data }: { data: UserProduct[] }) => {
   if (!data || data.length === 0) {
     return <Text style={styles.emptyText}>No items to display</Text>;
   }
 
-  const listRef = useRef<FlatList<ShelfItem>>(null);
+  const listRef = useRef<FlatList<UserProduct>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
@@ -47,14 +47,6 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
   const viewabilityConfig = useRef({
     viewAreaCoveragePercentThreshold: 50,
   }).current;
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      const clamped = Math.max(0, Math.min(index, data.length - 1));
-      listRef.current?.scrollToIndex({ index: clamped, animated: true });
-    },
-    [data.length],
-  );
 
   return (
     <View>
