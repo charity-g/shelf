@@ -87,6 +87,8 @@ export default function TabLayout() {
         name="login"
         options={{
           href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
         }}
       />
 
@@ -94,6 +96,8 @@ export default function TabLayout() {
         name="signup"
         options={{
           href: null,
+          headerShown: false,
+          tabBarStyle: { display: 'none' },
         }}
       />
     </Tabs>

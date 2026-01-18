@@ -18,7 +18,11 @@ processingRouter.get("/ping", (req, res) => {
 
 // OCR route
 processingRouter.post("/ocr", upload.single("image"), async (req, res) => {
+  console.log("=== OCR Request Debug ===");
+  console.log("Content-Type:", req.headers["content-type"]);
+  console.log("Body keys:", Object.keys(req.body || {}));
   console.log("Received file:", req.file);
+  console.log("=========================");
 
   if (!req.file) {
     return res.status(400).json({ error: "No image uploaded" });
