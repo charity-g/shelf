@@ -9,12 +9,12 @@ interface GLBModelProps {
 }
 
 const categoricalMapping: Record<string, any> = {
-  cleanser: require("../assets/models/cylinder.glb"),
+  cleanser: require("../assets/models/spray_bottle.glb"),
   toner: require("../assets/models/cylinder.glb"),
   exfoliant: require("../assets/models/cylinder.glb"),
   serum: require("../assets/models/cylinder.glb"),
   moisturizer: require("../assets/models/cylinder.glb"),
-  sunscreen: require("../assets/models/cylinder.glb"),
+  sunscreen: require("../assets/models/spray_bottle.glb"),
   faceMasks: require("../assets/models/cylinder.glb"),
 };
 

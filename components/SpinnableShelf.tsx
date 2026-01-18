@@ -1,12 +1,11 @@
 import { Canvas } from "@react-three/fiber/native";
-import React, { Suspense, useState } from "react";
+import React, { Suspense } from "react";
 import {
     Dimensions,
     FlatList,
     StyleSheet,
     Text,
-    TouchableOpacity,
-    View,
+    View
 } from "react-native";
 import { ShelfItem } from "../types/ShelfItem";
 import GLBModel from "./GLBModel";
@@ -29,23 +28,9 @@ const SpinnableShelfItemView = ({ category }: { category: string }) => {
 };
 
 const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   if (!data || data.length === 0) {
     return <Text style={styles.emptyText}>No items to display</Text>;
   }
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentIndex < data.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
 
   const renderItem = ({ item }: { item: ShelfItem }) => (
     <View style={[styles.itemContainer, { width: width - 80 }]}>
@@ -54,35 +39,28 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
       <Text style={styles.ingredients}>
         Ingredients: {item.ingredients.join(", ")}
       </Text>
+
+      <View style={{ height: 200 }}>
+        <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[5, 5, 5]} intensity={1} />
+          <Suspense fallback={null}>
+            <GLBModel category={item.category} spinnable={true} />
+          </Suspense>
+        </Canvas>
+      </View>
     </View>
   );
 
   return (
-    <View style={styles.carouselContainer}>
-      {currentIndex > 0 && (
-        <TouchableOpacity style={styles.arrowLeft} onPress={handlePrev}>
-          <Text style={styles.arrowText}>◀</Text>
-        </TouchableOpacity>
-      )}
-
-      <SpinnableShelfItemView category={data[currentIndex].category} />
-
-      <FlatList
-        data={[data[currentIndex]]} // Show only the current item
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal
-        pagingEnabled
-        scrollEnabled={false} // Disable manual scrolling
-        showsHorizontalScrollIndicator={false}
-      />
-
-      {currentIndex < data.length - 1 && (
-        <TouchableOpacity style={styles.arrowRight} onPress={handleNext}>
-          <Text style={styles.arrowText}>▶</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item, index) => index.toString()}
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+    />
   );
 };
 
