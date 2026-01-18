@@ -17,7 +17,7 @@ export interface OcrResponse {
 }
 
 export async function performOcr(formData: FormData) {
-  const data = await apiRequest("ocr", {
+  const data = await apiRequest("/processing/ocr", {
     method: "POST",
     body: formData,
   });
