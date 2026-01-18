@@ -9,8 +9,10 @@ import {
   View,
 } from "react-native";
 
+import { router } from "@/.expo/types/router";
 import { fetchUserProducts as fetchUserProductsFromAPI } from "../api/userProducts";
 import { Screen } from "../components/Screen";
+import { getUidFromAsyncStorage } from "../services/auth";
 import { colors, typography } from "../styles/shared";
 import { UserProduct } from "../types/UserProduct";
 
@@ -38,9 +40,6 @@ interface SimilarProduct {
   sharedIngredients: string[];
 }
 
-// TODO: Replace with actual user ID from auth context
-const CURRENT_USER_ID = "user_001";
-
 // Transform backend UserProduct to frontend Product format
 function transformUserProduct(userProduct: UserProduct): Product {
   return {
@@ -52,10 +51,10 @@ function transformUserProduct(userProduct: UserProduct): Product {
 }
 
 // Fetch user's products from backend API
-async function fetchUserProducts(): Promise<Product[]> {
+async function fetchUserProducts(currentUserId: string): Promise<Product[]> {
   try {
     const userProducts = await fetchUserProductsFromAPI({
-      user_id: CURRENT_USER_ID,
+      user_id: currentUserId,
     });
     return userProducts.map(transformUserProduct);
   } catch (error) {
@@ -277,18 +276,25 @@ export default function Compare() {
   const [similarProducts, setSimilarProducts] = useState<SimilarProduct[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Load user's products on mount
   useEffect(() => {
     async function loadProducts() {
       try {
-        const data = await fetchUserProducts();
+        const uid = await getUidFromAsyncStorage();
+        if (!uid) {
+          router.set("/");
+        }
+        setUserId(uid);
+        const data = await fetchUserProducts(uid);
         setProducts(data);
         setFilteredProducts(data);
       } finally {
         setLoadingProducts(false);
       }
     }
+
     loadProducts();
   }, []);
 
