@@ -81,41 +81,21 @@ export default function TabLayout() {
           title: "Compare",
           href: null,
         }}
-          />
-          
+      />
 
-          <Tabs.Screen
-              name="login"
-              options={{
-                  title: "Login",
-                  href: null,
-              }}
-          />
+      <Tabs.Screen
+        name="login"
+        options={{
+          href: null,
+        }}
+      />
 
-          <Tabs.Screen
-              name="signup"
-              options={{
-                  title: "Sign Up",
-                  href: null,
-              }}
-          />    
-
-          <Tabs.Screen
-              name="login"
-              options={{
-                  href: null,
-              }}
-          />
-
-
-          <Tabs.Screen
-              name="signup"
-              options={{
-                  href: null,
-              }}
-          />
-      </Tabs>
-      
-      
+      <Tabs.Screen
+        name="signup"
+        options={{
+          href: null,
+        }}
+      />
+    </Tabs>
   );
 }
