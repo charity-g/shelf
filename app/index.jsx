@@ -5,6 +5,7 @@ import { Animated, Dimensions, Pressable, StyleSheet } from "react-native";
 import { colors } from "../styles/shared";
 
 const { width, height } = Dimensions.get("window");
+const gradientSize = Math.max(width, height) * 6;
 
 export default function App() {
   const router = useRouter();
@@ -44,10 +45,18 @@ export default function App() {
           }}
         >
           <LinearGradient
-            colors={[colors.subtle, colors.text, "#91EAE4"]}
+            colors={[colors.subtle, colors.line, colors.text, "#91EAE4"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.gradient}
+            style={[
+              styles.gradient,
+              {
+                width: gradientSize,
+                height: gradientSize,
+                top: -gradientSize / 2,
+                left: -gradientSize / 2,
+              },
+            ]}
           />
         </Animated.View>
 
@@ -67,7 +76,7 @@ export default function App() {
             },
           ]}
         >
-          YourBrand
+          shelf.
         </Animated.Text>
       </Animated.View>
     </Pressable>
@@ -79,11 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   gradient: {
-    width: width * 4,
-    height: height * 4,
     position: "absolute",
-    top: -height / 2,
-    left: -width / 2,
   },
   brand: {
     position: "absolute",
