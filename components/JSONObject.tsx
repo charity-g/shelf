@@ -9,6 +9,7 @@ function JSONModelContent({
   spinnable,
   scale,
   position,
+  isHighlighted = false,
 }: {
   object: THREE.Object3D;
   spinnable: boolean;
@@ -17,7 +18,7 @@ function JSONModelContent({
 }) {
   const pivotRef = useRef<Group>(null);
 
-  useModelColoring(object);
+  useModelColoring(object, isHighlighted);
 
   useFrame(() => {
     if (spinnable && pivotRef.current) {
@@ -37,6 +38,7 @@ interface JSONModelProps {
   spinnable?: boolean;
   scaleMultiplier?: number;
   position?: [number, number, number];
+  isHighlighted?: boolean;
 }
 
 export function JSONModel({
@@ -44,6 +46,7 @@ export function JSONModel({
   spinnable = false,
   scaleMultiplier,
   position,
+  isHighlighted,
 }: JSONModelProps) {
   const [object, setObject] = useState<THREE.Object3D | null>(null);
   const config = getModelConfig(category);
@@ -62,6 +65,7 @@ export function JSONModel({
       spinnable={spinnable}
       scale={scaleMultiplier ? config.scale * scaleMultiplier : config.scale}
       position={position ?? config.position}
+      isHighlighted={isHighlighted}
     />
   );
 }
