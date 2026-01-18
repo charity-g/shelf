@@ -1,11 +1,14 @@
 import dotenv from "dotenv";
 import express from "express";
+import multer from "multer";
 import fetch from "node-fetch";
 
 dotenv.config();
 
-export const processingprocessingRouter = express.processingRouter(); // namespace processingRouter
-processingprocessingRouter.get("/", (req, res) => {
+const upload = multer({ storage: multer.memoryStorage() });
+
+export const processingRouter = express.Router(); // namespace processingRouter
+processingRouter.get("/", (req, res) => {
   res.send("Backend server is running. Use /ping or /ocr routes.");
 });
 
@@ -66,7 +69,7 @@ Return ONLY valid JSON without markdown code blocks or extra text.`,
     const ocrResponse = await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "processingRouter lication/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     });
