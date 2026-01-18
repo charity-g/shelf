@@ -11,15 +11,20 @@ import { colors, typography } from "../styles/shared";
 
 import { UserProduct } from "@/types/UserProduct";
 import { fetchUserProducts } from "../api/userProducts";
+import { getUidFromAsyncStorage } from "../services/auth";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [items, setItems] = useState<UserProduct[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const loadItems = async () => {
       const userId = await getUidFromAsyncStorage();
-      if (!userId) const products = await fetchUserProducts();
+      if (!userId) {
+        router.replace("/");
+      }
+      const products = await fetchUserProducts();
       setItems(products);
     };
     loadItems();
@@ -28,7 +33,6 @@ export default function Home() {
   const addItem = (item: {}) => {
     setItems((prev) => [...prev]); //TODO: call backend to add item or something
   };
-  const router = useRouter();
 
   return (
     <Screen>
