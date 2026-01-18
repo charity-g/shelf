@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber/native";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Color, Group, ObjectLoader } from "three";
 import cream from "../assets/models/cream.json";
 import cylinder from "../assets/models/cylinder.json";
@@ -51,20 +51,20 @@ export function JSONModel({
   category = "cleanser",
   spinnable = false,
 }: JSONModelProps) {
-  const object = useRef<THREE.Object3D | null>(null);
-
+  const [object, setObject] = useState<THREE.Object3D | null>(null);
   const config = getModelConfig(category);
 
   useEffect(() => {
     const loader = new ObjectLoader();
     const loadedObject = loader.parse(config.obj as any);
-    object.current = loadedObject;
+    setObject(loadedObject); // 🔥 triggers re-render
   }, [config]);
 
-  if (!object.current) return null;
+  if (!object) return null;
+
   return (
     <JSONModelContent
-      object={object.current}
+      object={object}
       spinnable={spinnable}
       scale={config.scale}
       position={config.position}
