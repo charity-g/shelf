@@ -309,6 +309,167 @@ app.delete('/ingredients/:id', async (req, res) => {
 });
 
 // ============================================
+// Products Endpoints
+// ============================================
+
+// Get all products (with optional category filter)
+app.get('/products', async (req, res) => {
+    try {
+        const { category, brand } = req.query;
+
+        let sql = 'SELECT * FROM DAVID.PUBLIC.PRODUCTS WHERE 1=1';
+        const binds = [];
+
+        if (category) {
+            sql += ' AND LOWER("CATEGORY") = LOWER(?)';
+            binds.push(category);
+        }
+        if (brand) {
+            sql += ' AND LOWER("BRAND") = LOWER(?)';
+            binds.push(brand);
+        }
+
+        sql += ' ORDER BY "CATEGORY", "BRAND", "NAME" LIMIT 500';
+
+        const rows = await execSQL(sql, binds);
+        res.json({ products: rows });
+    } catch (error) {
+        console.error('Get products error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get a single product by ID
+app.get('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const rows = await execSQL(
+            'SELECT * FROM DAVID.PUBLIC.PRODUCTS WHERE "ID" = ?',
+            [id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        res.json({ product: rows[0] });
+    } catch (error) {
+        console.error('Get product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Insert a new product
+app.post('/products', async (req, res) => {
+    try {
+        const id = req.body.ID || req.body.id;
+        const name = req.body.NAME || req.body.name;
+        const brand = req.body.BRAND || req.body.brand;
+        const category = req.body.CATEGORY || req.body.category;
+
+        if (!id || !name || !brand || !category) {
+            return res.status(400).json({
+                error: 'Missing required fields: id, name, brand, category'
+            });
+        }
+
+        const rows = await execSQL(
+            'INSERT INTO DAVID.PUBLIC.PRODUCTS ("ID", "NAME", "BRAND", "CATEGORY") VALUES (?, ?, ?, ?)',
+            [id, name, brand, category]
+        );
+
+        res.json({
+            success: true,
+            message: 'Product created successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Create product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update a product
+app.put('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ error: 'Missing product ID' });
+        }
+
+        const updates = [];
+        const binds = [];
+
+        const name = req.body.NAME !== undefined ? req.body.NAME :
+            req.body.name !== undefined ? req.body.name : undefined;
+        const brand = req.body.BRAND !== undefined ? req.body.BRAND :
+            req.body.brand !== undefined ? req.body.brand : undefined;
+        const category = req.body.CATEGORY !== undefined ? req.body.CATEGORY :
+            req.body.category !== undefined ? req.body.category : undefined;
+
+        if (name !== undefined) {
+            updates.push('"NAME" = ?');
+            binds.push(name);
+        }
+        if (brand !== undefined) {
+            updates.push('"BRAND" = ?');
+            binds.push(brand);
+        }
+        if (category !== undefined) {
+            updates.push('"CATEGORY" = ?');
+            binds.push(category);
+        }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        binds.push(id);
+
+        const rows = await execSQL(
+            `UPDATE DAVID.PUBLIC.PRODUCTS SET ${updates.join(', ')} WHERE "ID" = ?`,
+            binds
+        );
+
+        res.json({
+            success: true,
+            message: 'Product updated successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Update product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete a product
+app.delete('/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ error: 'Missing product ID' });
+        }
+
+        const rows = await execSQL(
+            'DELETE FROM DAVID.PUBLIC.PRODUCTS WHERE "ID" = ?',
+            [id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Product deleted successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Delete product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================
 // USER_ID / User Products Endpoints
 // ============================================
 
