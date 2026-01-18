@@ -9,20 +9,20 @@ interface GLBModelProps {
 }
 
 const categoricalMapping = {
-  cleanser: "../assets/models/cylinder.glb",
-  toner: "../assets/models/toner.glb",
-  exfoliant: "../assets/models/exfoliant.glb",
-  serum: "../assets/models/serum.glb",
-  moisturizer: "../assets/models/moisturizer.glb",
-  sunscreen: "../assets/models/sunscreen.glb",
-  faceMasks: "../assets/models/face_masks.glb",
+  cleanser: require("../assets/models/cylinder.glb"),
+  toner: require("../assets/models/toner.glb"),
+  exfoliant: require("../assets/models/exfoliant.glb"),
+  serum: require("../assets/models/serum.glb"),
+  moisturizer: require("../assets/models/moisturizer.glb"),
+  sunscreen: require("../assets/models/sunscreen.glb"),
+  faceMasks: require("../assets/models/face_masks.glb"),
 };
 
 export default function GLBModel({
   category = "cleanser",
   spinnable = false,
 }: GLBModelProps) {
-  const gltf = useGLTF(require(categoricalMapping[category.toLowerCase()]));
+  const gltf = useGLTF(categoricalMapping[category.toLowerCase()]);
   const pivotRef = useRef<Group>(null);
 
   // Get the actual scene/mesh

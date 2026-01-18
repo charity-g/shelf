@@ -65,7 +65,7 @@ export default function Home() {
 
   return (
     <Screen>
-      <SpinnableShelf data={[]} />
+      <SpinnableShelf data={items} />
       {/* <ShelfGrid
         rows={2}
         columns={4}
