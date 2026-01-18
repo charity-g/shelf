@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { Screen } from "../components/Screen";
+import { fetchUserProducts as fetchUserProductsFromAPI, UserProduct } from "../src/api/snowflake";
 import { colors, typography } from "../styles/shared";
 
 // Types
@@ -36,22 +37,28 @@ interface SimilarProduct {
   sharedIngredients: string[];
 }
 
-// Placeholder API base URL
-const API_BASE = "http://localhost:3001";
+// TODO: Replace with actual user ID from auth context
+const CURRENT_USER_ID = "user_001";
 
-// Mock fetch for user's products (simulating local storage/API)
+// Transform backend UserProduct to frontend Product format
+function transformUserProduct(userProduct: UserProduct): Product {
+  return {
+    id: userProduct.PRODUCT_ID,
+    name: userProduct.NAME || userProduct.PRODUCT_DESC || "Unknown Product",
+    brand: userProduct.PRODUCT_DESC || "",
+    category: userProduct.CATEGORY || "Uncategorized",
+  };
+}
+
+// Fetch user's products from backend API
 async function fetchUserProducts(): Promise<Product[]> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  
-  return [
-    { id: "1", name: "Gentle Foaming Cleanser", brand: "CeraVe", category: "Cleanser" },
-    { id: "2", name: "Soy Face Cleanser", brand: "Fresh", category: "Cleanser" },
-    { id: "3", name: "Facial Treatment Essence", brand: "SK-II", category: "Toner" },
-    { id: "4", name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", category: "Serum" },
-    { id: "5", name: "Niacinamide 10% + Zinc 1%", brand: "The Ordinary", category: "Serum" },
-    { id: "6", name: "Moisturizing Cream", brand: "CeraVe", category: "Moisturizer" },
-    { id: "7", name: "UV Aqua Rich Watery Essence", brand: "Biore", category: "Sunscreen" },
-  ];
+  try {
+    const userProducts = await fetchUserProductsFromAPI({ user_id: CURRENT_USER_ID });
+    return userProducts.map(transformUserProduct);
+  } catch (error) {
+    console.error("Error fetching user products:", error);
+    throw error;
+  }
 }
 
 // Placeholder endpoint: Get product details with ingredients

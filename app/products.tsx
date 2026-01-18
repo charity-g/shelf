@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { Screen } from "../components/Screen";
+import { fetchUserProducts, UserProduct } from "../src/api/snowflake";
 import { colors, typography } from "../styles/shared";
 
 // Product type definition
@@ -27,59 +28,28 @@ const CATEGORIES = [
   "Face Masks",
 ];
 
-// Placeholder API endpoint
-const API_ENDPOINT = "https://api.example.com/products";
+// TODO: Replace with actual user ID from auth context
+const CURRENT_USER_ID = "user_001";
 
-// Mock API fetch function
-async function fetchProducts(): Promise<Product[]> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 800));
+// Transform backend UserProduct to frontend Product format
+function transformUserProduct(userProduct: UserProduct): Product {
+  return {
+    id: userProduct.PRODUCT_ID,
+    name: userProduct.NAME || userProduct.PRODUCT_DESC || "Unknown Product",
+    brand: userProduct.PRODUCT_DESC || "",
+    category: userProduct.CATEGORY || "Uncategorized",
+  };
+}
 
-  // Hardcoded skincare products (pretending this comes from API)
-  const mockProducts: Product[] = [
-    // Cleansers
-    { id: "1", name: "Gentle Foaming Cleanser", brand: "CeraVe", category: "Cleanser" },
-    { id: "2", name: "Soy Face Cleanser", brand: "Fresh", category: "Cleanser" },
-    { id: "3", name: "Low pH Good Morning Gel Cleanser", brand: "COSRX", category: "Cleanser" },
 
-    // Toners
-    { id: "4", name: "Facial Treatment Essence", brand: "SK-II", category: "Toner" },
-    { id: "5", name: "Glow Recipe Watermelon Toner", brand: "Glow Recipe", category: "Toner" },
-    { id: "6", name: "Klairs Supple Preparation Toner", brand: "Klairs", category: "Toner" },
-
-    // Exfoliants
-    { id: "7", name: "BHA Blackhead Power Liquid", brand: "COSRX", category: "Exfoliant" },
-    { id: "8", name: "Glycolic Acid 7% Toning Solution", brand: "The Ordinary", category: "Exfoliant" },
-    { id: "9", name: "Paula's Choice 2% BHA Exfoliant", brand: "Paula's Choice", category: "Exfoliant" },
-
-    // Serums
-    { id: "10", name: "Hyaluronic Acid 2% + B5", brand: "The Ordinary", category: "Serum" },
-    { id: "11", name: "Niacinamide 10% + Zinc 1%", brand: "The Ordinary", category: "Serum" },
-    { id: "12", name: "C E Ferulic", brand: "SkinCeuticals", category: "Serum" },
-    { id: "13", name: "Advanced Snail 96 Mucin Power Essence", brand: "COSRX", category: "Serum" },
-
-    // Moisturizers
-    { id: "14", name: "Moisturizing Cream", brand: "CeraVe", category: "Moisturizer" },
-    { id: "15", name: "Water Cream", brand: "Tatcha", category: "Moisturizer" },
-    { id: "16", name: "Laneige Water Bank Moisture Cream", brand: "Laneige", category: "Moisturizer" },
-
-    // Sunscreens
-    { id: "17", name: "UV Aqua Rich Watery Essence", brand: "Biore", category: "Sunscreen" },
-    { id: "18", name: "Unseen Sunscreen SPF 40", brand: "Supergoop!", category: "Sunscreen" },
-    { id: "19", name: "Beauty of Joseon Relief Sun", brand: "Beauty of Joseon", category: "Sunscreen" },
-
-    // Face Masks
-    { id: "20", name: "Hydrating Mask", brand: "Dr. Jart+", category: "Face Masks" },
-    { id: "21", name: "Watermelon Glow Sleeping Mask", brand: "Glow Recipe", category: "Face Masks" },
-    { id: "22", name: "Honey Overnight Mask", brand: "Farmacy", category: "Face Masks" },
-  ];
-
-  // In real implementation, this would be:
-  // const response = await fetch(API_ENDPOINT);
-  // const data = await response.json();
-  // return data.products;
-
-  return mockProducts;
+  async function fetchProducts(): Promise<Product[]> {
+    try {
+      const userProducts = await fetchUserProducts({ user_id: CURRENT_USER_ID });
+      return userProducts.map(transformUserProduct);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      throw error;
+    }
 }
 
 // Group products by category

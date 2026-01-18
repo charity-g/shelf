@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
 export default function Discover() {
+  const [query, setQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <Screen>
       <View style={styles.header}>
@@ -11,12 +15,25 @@ export default function Discover() {
       </View>
 
       <View style={styles.searchBlock}>
-        <View style={styles.searchBar}>
-          <Text style={styles.searchPlaceholder}>skincare (e.g. toner)</Text>
+        <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
+          <TextInput
+            placeholder="skincare (e.g. toner)"
+            placeholderTextColor={colors.muted}
+            value={query}
+            onChangeText={setQuery}
+            onFocus={() => setIsFocused(true)}
+            style={[styles.searchInput, isFocused && styles.searchInputFocused]}
+          />
         </View>
-        <View style={styles.searchButton}>
+        <Pressable
+          style={styles.searchButton}
+          onPress={() => {
+            console.log("Search query:", query);
+            setIsFocused(false);
+          }}
+        >
           <Text style={styles.searchButtonText}>search</Text>
-        </View>
+        </Pressable>
       </View>
 
       <View style={styles.filterRow}>
@@ -65,9 +82,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
   },
-  searchPlaceholder: {
+  searchBarFocused: {
+    borderColor: colors.accent,
+    shadowColor: colors.accent,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+  },
+  searchInput: {
     fontSize: 12,
-    color: colors.muted,
+    color: colors.text,
   },
   searchButton: {
     alignSelf: "flex-end",
