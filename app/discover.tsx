@@ -6,6 +6,7 @@ import { colors, typography } from "../styles/shared";
 
 export default function Discover() {
   const [query, setQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <Screen>
@@ -14,12 +15,14 @@ export default function Discover() {
       </View>
 
       <View style={styles.searchBlock}>
-        <View style={styles.searchBar}>
+        <View style={[styles.searchBar, isFocused && styles.searchBarFocused]}>
           <TextInput
             placeholder="skincare (e.g. toner)"
             placeholderTextColor={colors.muted}
             value={query}
             onChangeText={setQuery}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             style={styles.searchInput}
           />
         </View>
@@ -73,6 +76,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.subtle,
     borderWidth: 1,
     borderColor: colors.line,
+  },
+  searchBarFocused: {
+    borderColor: colors.accent,
+    shadowColor: colors.accent,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
   },
   searchInput: {
     fontSize: 12,
