@@ -1,77 +1,97 @@
-import * as ImagePicker from "expo-image-picker";
-import React, { useEffect, useState } from "react";
-import { Alert, Button, Image, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useEffect, useRef } from "react";
+import { Animated, Dimensions, Pressable, StyleSheet } from "react-native";
+import { colors } from "../styles/shared";
+
+const { width, height } = Dimensions.get("window");
 
 export default function App() {
-    const [image, setImage] = useState(null);
-    const [text, setText] = useState("");
-    const [hasPermission, setHasPermission] = useState(null);
+  const router = useRouter();
 
-    // Ask for camera permissions on mount
-    useEffect(() => {
-        (async () => {
-            const { status } = await ImagePicker.requestCameraPermissionsAsync();
-            setHasPermission(status === "granted");
-            if (status !== "granted") {
-                Alert.alert("Camera permission is required to take photos.");
-            }
-        })();
-    }, []);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const gradientAnim = useRef(new Animated.Value(0)).current;
 
-    const pickImage = async () => {
-        if (!hasPermission) return;
+  useEffect(() => {
+    // Brand fade-in
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1800,
+      useNativeDriver: true,
+    }).start();
 
-        const result = await ImagePicker.launchCameraAsync({
-            quality: 1,
-        });
+    // Infinite gradient animation
+    Animated.loop(
+      Animated.timing(gradientAnim, {
+        toValue: 1,
+        duration: 6000,
+        useNativeDriver: false,
+      }),
+    ).start();
+  }, []);
 
-        if (!result.canceled) {
-            const photo = result.assets[0];
-            setImage(photo.uri);
-            await uploadImage(photo);
-        }
-    };
+  const colorInterpolation = gradientAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
-    const uploadImage = async (photo) => {
-        try {
-            const formData = new FormData();
-            formData.append("image", {
-                uri: photo.uri,
-                name: "photo.jpg",
-                type: "image/jpeg",
-            });
+  return (
+    <Pressable style={styles.container} onPress={() => router.replace("/home")}>
+      <Animated.View style={styles.container}>
+        <Animated.View
+          style={{
+            transform: [{ rotate: colorInterpolation }],
+          }}
+        >
+          <LinearGradient
+            colors={[colors.subtle, colors.text, "#91EAE4"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradient}
+          />
+        </Animated.View>
 
-            const res = await fetch("http://128.189.150.85:3001/ocr", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!res.ok) {
-                const textResponse = await res.text();
-                console.error("Server error:", textResponse);
-                Alert.alert("Server error", textResponse);
-                return;
-            }
-
-            const data = await res.json();
-            //setText(data.text || "No text detected");
-        } catch (err) {
-            console.error("Upload failed:", err);
-            Alert.alert("Error", err.message);
-        }
-    };
-
-
-    return (
-        <View style={{ padding: 40 }}>
-            <Button title="Take Photo" onPress={pickImage} />
-            {image && (
-                <Image
-                    source={{ uri: image }}
-                    style={{ height: 200, width: 200, marginVertical: 20 }}
-                />
-            )}
-            <Text>{text}</Text>
-        </View>
-    );
+        <Animated.Text
+          style={[
+            styles.brand,
+            {
+              opacity: fadeAnim,
+              transform: [
+                {
+                  translateY: fadeAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [20, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          YourBrand
+        </Animated.Text>
+      </Animated.View>
+    </Pressable>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    width: width * 4,
+    height: height * 4,
+    position: "absolute",
+    top: -height / 2,
+    left: -width / 2,
+  },
+  brand: {
+    position: "absolute",
+    alignSelf: "center",
+    top: height / 2 - 40,
+    fontSize: 42,
+    fontWeight: "700",
+    color: colors.text,
+    letterSpacing: 2,
+  },
+});
