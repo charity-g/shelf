@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { fetchUserProducts, groupByCategory } from "../api/userProducts";
-import ProductStatistics from "../components/ProductStatistics";
-import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 import { ProductsByCategory, UserProduct } from "../types/UserProduct";
+import ProductStatistics from "./ProductStatistics";
 
 function transformUserProduct(userProduct: UserProduct) {
   return {
@@ -16,7 +15,8 @@ function transformUserProduct(userProduct: UserProduct) {
 }
 
 export default function Statistics() {
-  const [productsByCategory, setProductsByCategory] = useState<ProductsByCategory>({});
+  const [productsByCategory, setProductsByCategory] =
+    useState<ProductsByCategory>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,37 +41,31 @@ export default function Statistics() {
 
   if (loading) {
     return (
-      <Screen>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.accent} />
-          <Text style={styles.loadingText}>Loading statistics...</Text>
-        </View>
-      </Screen>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.accent} />
+        <Text style={styles.loadingText}>Loading statistics...</Text>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <Screen>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      </Screen>
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
     );
   }
 
   return (
-    <Screen>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Product Statistics</Text>
-          <Text style={styles.headerSubtitle}>
-            Analyze your collection and find duplicates
-          </Text>
-        </View>
-        <ProductStatistics productsByCategory={productsByCategory} />
-      </ScrollView>
-    </Screen>
+    <View style={{ paddingTop: 50 }}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Product Statistics</Text>
+        <Text style={styles.headerSubtitle}>
+          Analyze your collection and find duplicates
+        </Text>
+      </View>
+      <ProductStatistics productsByCategory={productsByCategory} />
+    </View>
   );
 }
 

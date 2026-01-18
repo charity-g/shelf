@@ -34,8 +34,7 @@ function calculateCategoryStats(
     .filter(([_, count]) => count > 1)
     .map(([key, count]) => {
       const product = products.find(
-        (p) =>
-          `${p.name.toLowerCase()}-${p.brand.toLowerCase()}` === key,
+        (p) => `${p.name.toLowerCase()}-${p.brand.toLowerCase()}` === key,
       );
       return `${product?.name} (${count}×)`;
     });
@@ -113,9 +112,7 @@ export default function ProductStatistics({
             <View style={styles.categoryHeader}>
               <Text style={styles.categoryName}>{category}</Text>
               <View style={styles.categoryBadge}>
-                <Text style={styles.categoryCount}>
-                  {stats.totalProducts}
-                </Text>
+                <Text style={styles.categoryCount}>{stats.totalProducts}</Text>
               </View>
             </View>
 

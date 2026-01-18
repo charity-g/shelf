@@ -1,3 +1,4 @@
+import Statistics from "@/components/statistics";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -241,6 +242,8 @@ export default function Compare() {
             )}
           </View>
         )}
+
+        <Statistics />
       </ScrollView>
     </Screen>
   );
