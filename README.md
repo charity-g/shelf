@@ -1,98 +1,53 @@
-# Shelf App 👋
+# shelf.
 
-This is an [Expo](https://expo.dev) project with a Snowflake backend API.
+## Inspiration
 
-## Project Structure
+**De-cluttering and de-influencing**
 
-- **Expo App**: React Native app using Expo Router (file-based routing)
-- **Backend API**: Express.js server connecting to Snowflake (`backend/` folder)
+The skincare industry has shifted from "self-care" to "shelf-care," a culture of overconsumption fueled by viral skincare trends. Many of us own twenty products but only have one face. We wanted to build a tool that empowers users to de-influence themselves, focusing on ingredient integrity rather than brand hype.
 
-## Quick Start
+## What it does
 
-### 1. Backend Setup
+Skincare is shrouded in marketing and complex chemistry. Most consumers don't know that their expensive "Hydrating Serum" and their "Soothing Toner" might share the same primary active ingredients (like Glycerin or Hyaluronic Acid). This leads to:
+- Using multiple overlapping products that do the exact same thing
+- Buying "new" innovations and wasting money on old formulas in new bottles.
+- Overtreating the skin by accidentally layering unintended active ingredients.
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+shelf. is an intelligent skincare auditor that decodes your regimen. By analyzing the chemical composition of your products, it transforms a cluttered bathroom vanity into a simple complete routine
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+Features:
+- We translate "enigmatic" chemical names into plain English. The app categorizes ingredients by their functional purpose (e.g., humectants, exfoliants, antioxidants).
+- Before you buy that new viral cream, shelf. scans the ingredients. If you already own a product with a 90% bio-similarity or the same primary function, the app warns you of the "Redundant Buy."
+- Instead of suggesting more products, shelf. identifies what your routine is actually missing (e.g., "You have three hydrators, but no SPF").
 
-3. Create `.env` file (copy from `.env.example` in backend folder):
-   ```bash
-   cp .env.example .env
-   ```
+## How we built it
 
-4. Fill in your Snowflake credentials in `backend/.env`:
-   - `SNOWFLAKE_ACCOUNT`: Your Snowflake account identifier
-   - `SNOWFLAKE_USER`: `SKINCARE_SERVICE`
-   - `SNOWFLAKE_PRIVATE_KEY`: Contents of your `snowflake_rsa_key.pem` file
-   - `SNOWFLAKE_ROLE`: `SKINCARE_APP_ROLE`
-   - `SNOWFLAKE_WAREHOUSE`: `COMPUTE_WH`
-   - `SNOWFLAKE_DATABASE`: `DAVID`
-   - `SNOWFLAKE_SCHEMA`: `PUBLIC`
-   - `API_KEY` (optional): For API authentication
+The backbone of shelf. is a comprehensive mapping of cosmetic chemistry. We began by curating an exhaustive dataset of skincare ingredients, which we then built into a relational model within Snowflake DB.
 
-5. Start the backend server:
-   ```bash
-   npm run dev
-   ```
-   
-   The backend will run on `http://localhost:3001` by default.
+Snowflake DB was invaluable in this process as it provided a space to store and map out all these relationships. Each ingredient was classified into its functional families (e.g., mapping Tocopherol and Emollients to Moisturizing Agents). This allowed us to create a logic engine that can identify functional duplicates, products that look different on the label but perform the same task on the skin.
 
-### 2. Expo App Setup
+## Challenges we ran into
 
-1. Install dependencies (from project root):
-   ```bash
-   npm install
-   ```
+Our biggest hurdle was data acquisition. We initially aimed to build a pre-populated database of every skincare product on the market, but inconsistent formatting across e-commerce sites made traditional web scraping very difficult.
 
-2. Set environment variables (create `.env` in project root or use Expo's config):
-   ```bash
-   EXPO_PUBLIC_API_BASE_URL=http://localhost:3001
-   # Optional:
-   # EXPO_PUBLIC_API_KEY=your_api_key_here
-   ```
+To overcome the lack of data we shifted to a vision first approach. We leveraged Gemini OCR to analyze product labels in real-time. This allowed us to identify and qualify products on the fly from a simple smartphone photo, bypassing the need for a perfect, pre-existing database.
 
-3. Start the Expo app:
-   ```bash
-   npx expo start
-   ```
+## Accomplishments that we're proud of
 
-In the output, you'll find options to open the app in a
+The Digital Vanity: We built an interactive shelf using Three.js and WebGL. Users don't just look at a list; they see their products rendered as 3D objects in a virtual space.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+The Clarity Engine: Successfully mapping multi-layered relationships between raw ingredients, their specific use cases (e.g., acne-fighting vs. hydrating), and their compatibility with different skin types.
 
-**Note**: For iOS Simulator or Android Emulator, make sure to use `http://localhost:3001` for the API URL. For physical devices or Expo Go, use your computer's local IP address (e.g., `http://192.168.1.100:3001`).
+## What we learned
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Cloud Data Warehousing: Gained hands-on experience with Snowflake DB for managing complex, multi-layered relational data.
+Computer Vision: Learned to implement and fine-tune Gemini OCR to extract structured text from curved, reflective surfaces (like cosmetic bottles).
+3D Web Rendering: Strong understanding in Three.js to create a premium user experience.
 
-## Get a fresh project
+## What's next for shelf.
 
-When you're ready, run:
+Smart Replacements: Instead of just suggesting "you need a Vitamin C," shelf. will suggest the specific, best-value product tailored to your existing routine.
 
-```bash
-npm run reset-project
-```
+Conflict Detection: Adding "Routine Safety" alerts to warn users if they are mixing ingredients that shouldn't go together (like Retinol and AHA acids).
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Community De-influencing: A social feature where users can share their "Minimalist Shelves" to inspire others to buy less and use better.
