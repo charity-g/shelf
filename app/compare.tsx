@@ -21,6 +21,7 @@ import { colors, typography } from "../styles/shared";
 import { Product, ProductDetails, SimilarProduct } from "../types/UserProduct";
 
 export default function Compare() {
+  const [viewMode, setViewMode] = useState<"products" | "stats">("products");
   const [searchQuery, setSearchQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -108,142 +109,179 @@ export default function Compare() {
 
   return (
     <Screen>
+      {/* Segmented Control */}
+      <View style={styles.segmented}>
+        <TouchableOpacity
+          style={[
+            styles.segment,
+            viewMode === "products" && styles.segmentActive,
+          ]}
+          onPress={() => setViewMode("products")}
+        >
+          <Text
+            style={[
+              styles.segmentText,
+              viewMode === "products" && styles.segmentTextActive,
+            ]}
+          >
+            Products
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.segment, viewMode === "stats" && styles.segmentActive]}
+          onPress={() => setViewMode("stats")}
+        >
+          <Text
+            style={[
+              styles.segmentText,
+              viewMode === "stats" && styles.segmentTextActive,
+            ]}
+          >
+            Statistics
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Search Section */}
-        {!selectedProduct && (
-          <View style={styles.searchSection}>
-            <Text style={styles.sectionLabel}>Search Your Products</Text>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search by name or brand..."
-              placeholderTextColor={colors.muted}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
+        {/* PRODUCTS VIEW */}
+        {viewMode === "products" && (
+          <>
+            {!selectedProduct && (
+              <View style={styles.searchSection}>
+                <Text style={styles.sectionLabel}>Search Your Products</Text>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search by name or brand..."
+                  placeholderTextColor={colors.muted}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
 
-            {/* Product List */}
-            <View style={styles.productList}>
-              {filteredProducts.length === 0 ? (
-                <Text style={styles.emptyText}>No products found</Text>
-              ) : (
-                filteredProducts.map((product) => (
-                  <TouchableOpacity
-                    key={product.id}
-                    style={styles.productRow}
-                    onPress={() => handleSelectProduct(product)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.productIcon} />
-                    <View style={styles.productInfo}>
-                      <Text style={styles.productName}>{product.name}</Text>
-                      <Text style={styles.productBrand}>{product.brand}</Text>
-                    </View>
-                    <View style={styles.arrow}>
-                      <Text style={styles.arrowText}>→</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))
-              )}
-            </View>
-          </View>
-        )}
-
-        {selectedProduct && (
-          <View style={styles.detailsSection}>
-            {/* Back Button */}
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={handleClearSelection}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.backButtonText}>← Back to search</Text>
-            </TouchableOpacity>
-
-            {/* Hero */}
-            <View style={styles.hero}>
-              <View style={styles.heroIcon} />
-            </View>
-
-            <Text style={styles.title}>{selectedProduct.name}</Text>
-            <Text style={styles.brandText}>{selectedProduct.brand}</Text>
-
-            {loadingDetails ? (
-              <View style={styles.detailsLoading}>
-                <ActivityIndicator size="small" color={colors.accent} />
-                <Text style={styles.loadingText}>Loading details...</Text>
-              </View>
-            ) : (
-              <>
-                {/* Ingredients */}
-                {productDetails && (
-                  <View style={styles.ingredientsSection}>
-                    <Text style={styles.sectionTitle}>
-                      This product contains:
-                    </Text>
-                    <View style={styles.ingredients}>
-                      {productDetails.ingredients.map((ingredient, index) => (
-                        <View key={index} style={styles.ingredientRow}>
-                          <View style={styles.ingredientBullet} />
-                          <Text style={styles.ingredientText}>
-                            {ingredient}
+                <View style={styles.productList}>
+                  {filteredProducts.length === 0 ? (
+                    <Text style={styles.emptyText}>No products found</Text>
+                  ) : (
+                    filteredProducts.map((product) => (
+                      <TouchableOpacity
+                        key={product.id}
+                        style={styles.productRow}
+                        onPress={() => handleSelectProduct(product)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.productIcon} />
+                        <View style={styles.productInfo}>
+                          <Text style={styles.productName}>{product.name}</Text>
+                          <Text style={styles.productBrand}>
+                            {product.brand}
                           </Text>
                         </View>
-                      ))}
-                    </View>
-                  </View>
-                )}
-
-                {/* Similar Products */}
-                <View style={styles.similarSection}>
-                  <Text style={styles.sectionTitle}>
-                    Your similar products:
-                  </Text>
-                  {similarProducts.length === 0 ? (
-                    <Text style={styles.emptyText}>
-                      No similar products found in your collection
-                    </Text>
-                  ) : (
-                    <View style={styles.similarList}>
-                      {similarProducts.map((similar) => (
-                        <View key={similar.id} style={styles.similarCard}>
-                          <View style={styles.similarHeader}>
-                            <View style={styles.similarIcon} />
-                            <View style={styles.similarInfo}>
-                              <Text style={styles.similarName}>
-                                {similar.name}
-                              </Text>
-                              <Text style={styles.similarBrand}>
-                                {similar.brand}
-                              </Text>
-                            </View>
-                            <View style={styles.matchBadge}>
-                              <Text style={styles.matchText}>
-                                {similar.matchPercentage}%
-                              </Text>
-                            </View>
-                          </View>
-                          <View style={styles.sharedIngredients}>
-                            <Text style={styles.sharedLabel}>
-                              Shared ingredients:
-                            </Text>
-                            <Text style={styles.sharedList}>
-                              {similar.sharedIngredients.join(", ")}
-                            </Text>
-                          </View>
+                        <View style={styles.arrow}>
+                          <Text style={styles.arrowText}>→</Text>
                         </View>
-                      ))}
-                    </View>
+                      </TouchableOpacity>
+                    ))
                   )}
                 </View>
-              </>
+              </View>
             )}
-          </View>
+
+            {selectedProduct && (
+              <View style={styles.detailsSection}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={handleClearSelection}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.backButtonText}>← Back to search</Text>
+                </TouchableOpacity>
+
+                <View style={styles.hero}>
+                  <View style={styles.heroIcon} />
+                </View>
+
+                <Text style={styles.title}>{selectedProduct.name}</Text>
+                <Text style={styles.brandText}>{selectedProduct.brand}</Text>
+
+                {loadingDetails ? (
+                  <View style={styles.detailsLoading}>
+                    <ActivityIndicator size="small" color={colors.accent} />
+                    <Text style={styles.loadingText}>Loading details...</Text>
+                  </View>
+                ) : (
+                  <>
+                    {productDetails && (
+                      <View style={styles.ingredientsSection}>
+                        <Text style={styles.sectionTitle}>
+                          This product contains:
+                        </Text>
+                        <View style={styles.ingredients}>
+                          {productDetails.ingredients.map(
+                            (ingredient, index) => (
+                              <View key={index} style={styles.ingredientRow}>
+                                <View style={styles.ingredientBullet} />
+                                <Text style={styles.ingredientText}>
+                                  {ingredient}
+                                </Text>
+                              </View>
+                            ),
+                          )}
+                        </View>
+                      </View>
+                    )}
+
+                    <View style={styles.similarSection}>
+                      <Text style={styles.sectionTitle}>
+                        Your similar products:
+                      </Text>
+                      {similarProducts.length === 0 ? (
+                        <Text style={styles.emptyText}>
+                          No similar products found in your collection
+                        </Text>
+                      ) : (
+                        <View style={styles.similarList}>
+                          {similarProducts.map((similar) => (
+                            <View key={similar.id} style={styles.similarCard}>
+                              <View style={styles.similarHeader}>
+                                <View style={styles.similarIcon} />
+                                <View style={styles.similarInfo}>
+                                  <Text style={styles.similarName}>
+                                    {similar.name}
+                                  </Text>
+                                  <Text style={styles.similarBrand}>
+                                    {similar.brand}
+                                  </Text>
+                                </View>
+                                <View style={styles.matchBadge}>
+                                  <Text style={styles.matchText}>
+                                    {similar.matchPercentage}%
+                                  </Text>
+                                </View>
+                              </View>
+                              <View style={styles.sharedIngredients}>
+                                <Text style={styles.sharedLabel}>
+                                  Shared ingredients:
+                                </Text>
+                                <Text style={styles.sharedList}>
+                                  {similar.sharedIngredients.join(", ")}
+                                </Text>
+                              </View>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  </>
+                )}
+              </View>
+            )}
+          </>
         )}
 
-        <Statistics />
+        {/* STATISTICS VIEW */}
+        {viewMode === "stats" && <Statistics />}
       </ScrollView>
     </Screen>
   );
@@ -264,12 +302,32 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.muted,
   },
-  searchSection: {
-    gap: 12,
+  segmented: {
+    flexDirection: "row",
+    backgroundColor: colors.subtle,
+    borderRadius: 12,
+    padding: 4,
+    marginVertical: 12,
   },
-  sectionLabel: {
-    ...typography.sectionTitle,
+  segment: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: "center",
   },
+  segmentActive: {
+    backgroundColor: colors.surface,
+  },
+  segmentText: {
+    fontSize: 13,
+    color: colors.muted,
+    fontWeight: "600",
+  },
+  segmentTextActive: {
+    color: colors.text,
+  },
+  searchSection: { gap: 12 },
+  sectionLabel: { ...typography.sectionTitle },
   searchInput: {
     backgroundColor: colors.subtle,
     borderRadius: 12,
@@ -280,9 +338,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
   },
-  productList: {
-    gap: 8,
-  },
+  productList: { gap: 8 },
   emptyText: {
     ...typography.body,
     color: colors.muted,
@@ -294,7 +350,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.subtle,
     borderRadius: 12,
-    padding: 12,
+    padding: 10,
     gap: 12,
     borderWidth: 1,
     borderColor: colors.line,
@@ -305,41 +361,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colors.lavender,
   },
-  productInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  productName: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  productBrand: {
-    fontSize: 11,
-    color: colors.muted,
-  },
+  productInfo: { flex: 1, gap: 2 },
+  productName: { fontSize: 13, fontWeight: "600", color: colors.text },
+  productBrand: { fontSize: 11, color: colors.muted },
   arrow: {
     width: 24,
     height: 24,
     alignItems: "center",
     justifyContent: "center",
   },
-  arrowText: {
-    fontSize: 16,
-    color: colors.accent,
-    fontWeight: "600",
-  },
-  detailsSection: {
-    gap: 12,
-  },
-  backButton: {
-    paddingVertical: 8,
-  },
-  backButtonText: {
-    fontSize: 13,
-    color: colors.accent,
-    fontWeight: "600",
-  },
+  arrowText: { fontSize: 16, color: colors.accent, fontWeight: "600" },
+  detailsSection: { gap: 12 },
+  backButton: { paddingVertical: 8 },
+  backButtonText: { fontSize: 13, color: colors.accent, fontWeight: "600" },
   hero: {
     height: 110,
     alignItems: "center",
@@ -367,43 +401,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: -8,
   },
-  detailsLoading: {
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 20,
-  },
-  ingredientsSection: {
-    gap: 10,
-  },
-  sectionTitle: {
-    ...typography.sectionTitle,
-    marginTop: 4,
-  },
-  ingredients: {
-    gap: 8,
-  },
-  ingredientRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
+  detailsLoading: { alignItems: "center", gap: 8, paddingVertical: 20 },
+  ingredientsSection: { gap: 10 },
+  sectionTitle: { ...typography.sectionTitle, marginTop: 4 },
+  ingredients: { gap: 8 },
+  ingredientRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   ingredientBullet: {
     width: 10,
     height: 10,
     borderRadius: 5,
     backgroundColor: colors.accentSoft,
   },
-  ingredientText: {
-    fontSize: 13,
-    color: colors.text,
-  },
-  similarSection: {
-    gap: 10,
-    marginTop: 4,
-  },
-  similarList: {
-    gap: 12,
-  },
+  ingredientText: { fontSize: 13, color: colors.text },
+  similarSection: { gap: 10, marginTop: 4 },
+  similarList: { gap: 12 },
   similarCard: {
     borderRadius: 14,
     padding: 12,
@@ -412,41 +423,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
   },
-  similarHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
+  similarHeader: { flexDirection: "row", alignItems: "center", gap: 10 },
   similarIcon: {
     width: 36,
     height: 36,
     borderRadius: 8,
     backgroundColor: colors.mint,
   },
-  similarInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  similarName: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  similarBrand: {
-    fontSize: 11,
-    color: colors.muted,
-  },
+  similarInfo: { flex: 1, gap: 2 },
+  similarName: { fontSize: 13, fontWeight: "600", color: colors.text },
+  similarBrand: { fontSize: 11, color: colors.muted },
   matchBadge: {
     backgroundColor: colors.accent,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
-  matchText: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#fff",
-  },
+  matchText: { fontSize: 11, fontWeight: "700", color: "#fff" },
   sharedIngredients: {
     backgroundColor: colors.surface,
     borderRadius: 8,
@@ -459,9 +452,5 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  sharedList: {
-    fontSize: 12,
-    color: colors.text,
-    lineHeight: 18,
-  },
+  sharedList: { fontSize: 12, color: colors.text, lineHeight: 18 },
 });
