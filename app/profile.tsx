@@ -16,20 +16,22 @@ async function fetchProfile(): Promise<ProfileData> {
   console.log("Fetching profile data... firebase user", user);
   return {
     user: {
-      name: user.displayName || "User",
+      name: user.displayName || "New User",
       email: user.email || "",
       skinType: "Combination",
-      joinedDate: user.metadata.creationTime || new Date().toISOString(),
+      joinedDate:
+        new Date(Number(user.createdAt)).toISOString() ||
+        new Date().toISOString(),
       id: user.uid,
-      avatarUrl: "",
+      avatarUrl: "https://api.example.com/avatars/user_001.jpg",
     },
     settings: [
-      { id: "s1", label: "Push Notifications", type: "toggle", value: true },
+      { id: "s1", label: "Push Notifications", type: "toggle", value: false },
       {
         id: "s2",
         label: "Product Expiry Reminders",
         type: "toggle",
-        value: true,
+        value: false,
       },
       { id: "s3", label: "Skin Type", type: "info", value: "Combination" },
       { id: "s4", label: "Routine Reminders", type: "toggle", value: false },
@@ -45,7 +47,6 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<Setting[]>([]);
   const [activeSetting, setActiveSetting] = useState<Setting | null>(null);
-  const [settingsState, setSettingsState] = useState<Setting[]>(settings);
 
   useEffect(() => {
     async function loadProfile() {
@@ -102,7 +103,7 @@ export default function Profile() {
   }
 
   function handleToggleChange(id: string, nextValue: boolean) {
-    setSettingsState((prev) =>
+    setSettings((prev) =>
       prev.map((s) => (s.id === id ? { ...s, value: nextValue } : s)),
     );
     setActiveSetting(null);
@@ -140,7 +141,7 @@ export default function Profile() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
-        {settingsState.map((setting) => (
+        {settings.map((setting) => (
           <SettingRow
             key={setting.id}
             setting={setting}
