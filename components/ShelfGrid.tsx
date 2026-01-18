@@ -21,7 +21,7 @@ const ShelfGrid = ({
 }: ShelfGridProps) => {
   return (
     <View style={{ flex: 1 }}>
-      <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
+      <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>

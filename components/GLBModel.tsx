@@ -9,42 +9,30 @@ interface GLBModelProps {
 
 export default function GLBModel({ spinnable = false }: GLBModelProps) {
   const gltf = useGLTF(require("../assets/models/cylinder.glb"));
-  const groupRef = useRef<Group>(null);
+  const pivotRef = useRef<Group>(null);
 
-  // Handle both single GLTF object and array of GLTF objects
-  const scene = centerGLBModel(gltf);
+  // Get the actual scene/mesh
+  const scene = Array.isArray(gltf) ? gltf[0]?.scene : gltf?.scene;
+  if (!scene) return null;
 
-  // Rotate the group in place
+  // Compute bounding box of the scene
+  const box = new Box3().setFromObject(scene);
+  const center = new Vector3();
+  box.getCenter(center);
+
+  // Position the scene relative to pivot so its visual center is at origin
+  scene.position.sub(center);
+
+  // Rotate the pivot group
   useFrame(() => {
-    if (spinnable && groupRef.current) {
-      groupRef.current.rotation.y += 0.01;
+    if (spinnable && pivotRef.current) {
+      pivotRef.current.rotation.y += 0.01;
     }
   });
 
-  if (!scene) return null;
-
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
-      {/* Object must be at origin to rotate in place */}
-      <primitive object={scene} scale={2} position={[0, 0, 0]} />
+    <group ref={pivotRef} position={[0, 0, 0]}>
+      <primitive object={scene} scale={2} />
     </group>
   );
-}
-
-function centerGLBModel(gltf: any) {
-  const scene = Array.isArray(gltf) ? gltf[0]?.scene : gltf?.scene;
-
-  if (scene) {
-    // Compute bounding box
-    const box = new Box3().setFromObject(scene);
-    const center = new Vector3();
-    box.getCenter(center);
-
-    // Offset the object so its center is at [0,0,0]
-    scene.position.x -= center.x;
-    scene.position.y -= center.y;
-    scene.position.z -= center.z;
-  }
-
-  return scene;
 }
