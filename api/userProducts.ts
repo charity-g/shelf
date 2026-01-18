@@ -350,9 +350,9 @@ export async function fetchSimilarProducts(
   return mockSimilar[productId] || [];
 }
 
-export async function fetchProducts(userId: string): Promise<Product[]> {
+export async function fetchProductsAll(): Promise<Product[]> {
   try {
-    const userProducts = await fetchUserProducts({ user_id: userId });
+    const userProducts = await fetchUserProducts();
     return userProducts.map(transformUserProduct);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -362,11 +362,19 @@ export async function fetchProducts(userId: string): Promise<Product[]> {
 
 // Group products by category
 export function groupByCategory(products: Product[]): ProductsByCategory {
+  if (!products || products.length === 0) {
+    console.warn("groupByCategory: No products provided");
+    return {};
+  }
+
   return products.reduce((acc, product) => {
-    if (!acc[product.category]) {
-      acc[product.category] = [];
+    const category =
+      product.category || (product as any).CATEGORY || "Uncategorized";
+
+    if (!acc[category]) {
+      acc[category] = [];
     }
-    acc[product.category].push(product);
+    acc[category].push(product);
     return acc;
   }, {} as ProductsByCategory);
 }

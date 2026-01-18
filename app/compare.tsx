@@ -80,8 +80,8 @@ export default function Compare() {
         fetchProductDetails(userId, product.id),
         fetchSimilarProducts(userId, product.id),
       ]);
-      setProductDetails(userId, details);
-      setSimilarProducts(userId, similar);
+      setProductDetails(details);
+      setSimilarProducts(similar);
     } finally {
       setLoadingDetails(false);
     }

@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -7,9 +6,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { fetchProducts, groupByCategory } from "../api/userProducts";
+import { fetchProductsAll, groupByCategory } from "../api/userProducts";
 import { Screen } from "../components/Screen";
-import { getUidFromAsyncStorage } from "../services/auth";
 import { colors, typography } from "../styles/shared";
 import { CATEGORIES, ProductsByCategory } from "../types/UserProduct";
 
@@ -17,21 +15,14 @@ export default function Products() {
   const [products, setProducts] = useState<ProductsByCategory>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>("");
-  const router = useRouter();
 
   useEffect(() => {
     async function loadProducts() {
       try {
         setLoading(true);
-        const userId = await getUidFromAsyncStorage();
-        if (!userId) {
-          router.replace("/");
-        } else {
-          setUserId(userId);
-        }
-        const data = await fetchProducts(userId);
+        const data = await fetchProductsAll();
         setProducts(groupByCategory(data));
+        console.log("setproducts", products);
       } catch (err) {
         setError("Failed to load products");
       } finally {
@@ -73,7 +64,7 @@ export default function Products() {
           <View key={category} style={styles.section}>
             <Text style={styles.sectionTitle}>{category}</Text>
             <View style={styles.list}>
-              {products[category]?.map((product) => (
+              {products[category.toLowerCase()]?.map((product) => (
                 <View key={product.id} style={styles.listRow}>
                   <View style={styles.listIcon} />
                   <View style={styles.productInfo}>
