@@ -54,7 +54,7 @@ export default function App() {
             }
 
             const data = await res.json();
-            setText(data.text || "No text detected");
+            //setText(data.text || "No text detected");
         } catch (err) {
             console.error("Upload failed:", err);
             Alert.alert("Error", err.message);

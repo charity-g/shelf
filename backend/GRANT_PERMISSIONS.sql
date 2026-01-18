@@ -1,0 +1,32 @@
+-- Snowflake Permissions Setup for SKINCARE_APP_ROLE
+-- Run these commands in Snowflake SQL Worksheet as ACCOUNTADMIN or a role with GRANT privileges
+
+-- Step 1: Grant warehouse usage
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 2: Grant database usage
+GRANT USAGE ON DATABASE DAVID TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 3: Grant schema usage
+GRANT USAGE ON SCHEMA DAVID.PUBLIC TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 4: Grant SELECT permissions (for reading data)
+GRANT SELECT ON ALL TABLES IN SCHEMA DAVID.PUBLIC TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 5: Grant INSERT, UPDATE, DELETE permissions (for write operations)
+-- Option A: Grant on specific tables
+GRANT INSERT, UPDATE, DELETE ON TABLE DAVID.PUBLIC.SKINCARE_DESC TO ROLE SKINCARE_APP_ROLE;
+GRANT INSERT, UPDATE, DELETE ON TABLE DAVID.PUBLIC.INGREDIENTS_DESC TO ROLE SKINCARE_APP_ROLE;
+GRANT INSERT, UPDATE, DELETE ON TABLE DAVID.PUBLIC.USER_ID TO ROLE SKINCARE_APP_ROLE;
+
+-- Option B: Grant on all tables in schema (if you prefer)
+-- GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA DAVID.PUBLIC TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 6: Verify permissions
+SHOW GRANTS TO ROLE SKINCARE_APP_ROLE;
+
+-- Step 7: Check if user has the role assigned
+SHOW GRANTS TO USER SKINCARE_SERVICE;
+
+-- If user doesn't have the role, grant it:
+-- GRANT ROLE SKINCARE_APP_ROLE TO USER SKINCARE_SERVICE;

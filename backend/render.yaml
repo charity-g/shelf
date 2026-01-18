@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: shelf-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+      # Add your Snowflake credentials in Render dashboard under Environment variables
+      # Required environment variables:
+      # - SNOWFLAKE_ACCOUNT
+      # - SNOWFLAKE_USER
+      # - SNOWFLAKE_PRIVATE_KEY
+      # - SNOWFLAKE_ROLE
+      # - SNOWFLAKE_WAREHOUSE
+      # - SNOWFLAKE_DATABASE
+      # - SNOWFLAKE_SCHEMA
+      # - API_KEY (optional)
