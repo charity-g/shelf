@@ -3,6 +3,7 @@ import React, { Suspense, useRef } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { UserProduct } from "../types/UserProduct";
 import { JSONModel } from "./JSONObject";
+import { OrbitingCamera } from "./OrbitingCamera";
 
 // Get device width for carousel sizing
 const { width } = Dimensions.get("window");
@@ -23,6 +24,8 @@ const SpinnableShelfItem = ({ item }: { item: UserProduct }) => {
           <Suspense fallback={null}>
             <JSONModel category={item.CATEGORY} spinnable={true} />
           </Suspense>
+
+          <OrbitingCamera radius={5} speed={1} />
         </Canvas>
       </View>
     </View>
