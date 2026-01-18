@@ -10,7 +10,7 @@ import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
 import { UserProduct } from "@/types/UserProduct";
-import { fetchUserProducts } from "../src/api/snowflake";
+import { fetchUserProducts } from "../api/userProducts";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);

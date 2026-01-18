@@ -46,7 +46,12 @@ async function fetchProfile(): Promise<ProfileData> {
     },
     settings: [
       { id: "s1", label: "Push Notifications", type: "toggle", value: true },
-      { id: "s2", label: "Product Expiry Reminders", type: "toggle", value: true },
+      {
+        id: "s2",
+        label: "Product Expiry Reminders",
+        type: "toggle",
+        value: true,
+      },
       { id: "s3", label: "Skin Type", type: "info", value: "Combination" },
       { id: "s4", label: "Routine Reminders", type: "toggle", value: false },
       { id: "s5", label: "Privacy Settings", type: "link" },
@@ -98,7 +103,9 @@ export default function Profile() {
     return (
       <Screen>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || "Something went wrong"}</Text>
+          <Text style={styles.errorText}>
+            {error || "Something went wrong"}
+          </Text>
         </View>
       </Screen>
     );
@@ -150,9 +157,13 @@ export default function Profile() {
               <Text style={styles.settingValue}>{String(setting.value)}</Text>
             )}
             {setting.type === "toggle" && (
-              <Text style={styles.settingToggle}>{setting.value ? "On" : "Off"}</Text>
+              <Text style={styles.settingToggle}>
+                {setting.value ? "On" : "Off"}
+              </Text>
             )}
-            {setting.type === "link" && <Text style={styles.settingArrow}>›</Text>}
+            {setting.type === "link" && (
+              <Text style={styles.settingArrow}>›</Text>
+            )}
           </View>
         ))}
       </View>
