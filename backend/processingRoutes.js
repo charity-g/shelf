@@ -13,7 +13,7 @@ processingRouter.get("/", (req, res) => {
 });
 
 processingRouter.get("/ping", (req, res) => {
-  res.send("pong");
+  res.send(process.env.GEMINI_API_KEY ? "pong" : "GEMINI_API_KEY not set");
 });
 
 // OCR route
