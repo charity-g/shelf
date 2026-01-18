@@ -9,9 +9,9 @@ import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
-import { UserProduct } from "@/types/UserProduct";
 import { fetchUserProducts } from "../api/userProducts";
 import { getUidFromAsyncStorage } from "../services/auth";
+import { UserProduct } from "../types/UserProduct";
 
 export default function Home() {
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function Home() {
       if (!userId) {
         router.replace("/");
       }
-      const products = await fetchUserProducts();
+      const products = await fetchUserProducts({ user_id: userId as string });
       setItems(products);
     };
     loadItems();
