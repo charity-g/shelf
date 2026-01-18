@@ -20,8 +20,8 @@ export function Shelf({ data }: { data: ShelfItem[] }) {
             <JSONModel
               category={item.category}
               spinnable={false}
-              scaleMultiplier={1}
-              position={[x - 5 + index * 2.5, y, z]}
+              scaleMultiplier={2}
+              position={[x - 2 * data.length + index * 3, y + 2, z]}
             />
           </Suspense>
         );
