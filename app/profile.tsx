@@ -8,6 +8,7 @@ import { ProfileData, Setting } from "../types/UserProfile";
 import { InfoModal } from "../components/settings/InfoModal";
 import { LinkModal } from "../components/settings/LinkModal";
 import { SettingRow } from "../components/settings/SettingRow";
+import { ToggleModal } from "../components/settings/ToggleModal";
 
 // Placeholder API endpoint
 const API_ENDPOINT = "https://api.example.com/profile";
@@ -56,6 +57,7 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState<Setting[]>([]);
   const [activeSetting, setActiveSetting] = useState<Setting | null>(null);
+  const [settingsState, setSettingsState] = useState<Setting[]>(settings);
 
   useEffect(() => {
     async function loadProfile() {
@@ -111,6 +113,13 @@ export default function Profile() {
     );
   }
 
+  function handleToggleChange(id: string, nextValue: boolean) {
+    setSettingsState((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, value: nextValue } : s)),
+    );
+    setActiveSetting(null);
+  }
+
   const { user } = profileData;
 
   return (
@@ -143,7 +152,7 @@ export default function Profile() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
-        {settings.map((setting) => (
+        {settingsState.map((setting) => (
           <SettingRow
             key={setting.id}
             setting={setting}
@@ -161,6 +170,14 @@ export default function Profile() {
         <LinkModal
           visible={activeSetting?.type === "link"}
           title={activeSetting?.label ?? ""}
+          onClose={() => setActiveSetting(null)}
+        />
+
+        <ToggleModal
+          visible={activeSetting?.type === "toggle"}
+          label={activeSetting?.label ?? ""}
+          value={Boolean(activeSetting?.value)}
+          onConfirm={(next) => handleToggleChange(activeSetting!.id, next)}
           onClose={() => setActiveSetting(null)}
         />
       </View>
