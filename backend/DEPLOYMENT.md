@@ -1,8 +1,15 @@
 # Backend Deployment Guide
 
+## Exposing local backend
+
+- download ngrok via app store/online
+- `ngrok config add-authtoken <your token here>`
+- `ngrok http 3001` or whatever the port is
+
 ## ⚠️ Important: Netlify Limitation
 
 **Netlify is NOT suitable for Express.js backends.** Netlify is designed for:
+
 - Static websites
 - Serverless functions (short-lived, stateless)
 - JAMstack applications
@@ -14,6 +21,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 ### Option 1: Render (Recommended - Easiest) ⭐
 
 **Why Render:**
+
 - Free tier available
 - Automatic deployments from GitHub
 - Built-in SSL certificates
@@ -25,6 +33,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 1. **Create `render.yaml`** (already created in this repo)
 
 2. **Push to GitHub:**
+
    ```bash
    git add backend/
    git commit -m "Add backend for deployment"
@@ -69,6 +78,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 ### Option 2: Railway (Also Great)
 
 **Why Railway:**
+
 - Very easy setup
 - Free tier with $5 credit/month
 - Automatic deployments
@@ -96,6 +106,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 ### Option 3: Fly.io (Good for Global Distribution)
 
 **Why Fly.io:**
+
 - Free tier available
 - Global edge deployment
 - Great performance worldwide
@@ -103,6 +114,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 **Steps:**
 
 1. **Install Fly CLI:**
+
    ```bash
    curl -L https://fly.io/install.sh | sh
    ```
@@ -125,6 +137,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 ### Option 4: Heroku (Classic, but Paid)
 
 **Why Heroku:**
+
 - Well-established platform
 - Easy to use
 - **Note**: Free tier discontinued, costs ~$7/month
@@ -134,6 +147,7 @@ Your Express server needs to run continuously, which Netlify doesn't support wel
 1. **Create `Procfile`** (already created in this repo)
 
 2. **Install Heroku CLI:**
+
    ```bash
    npm install -g heroku
    ```

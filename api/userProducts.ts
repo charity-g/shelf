@@ -22,8 +22,8 @@ export async function fetchUserProducts(filters?: {
 
   const queryString = params.toString();
   const endpoint = queryString
-    ? `/user-products?${queryString}`
-    : "/user-products";
+    ? `/processing/user-products?${queryString}`
+    : "/processing/user-products";
 
   const data = await apiRequest(endpoint);
   return data.user_products || [];
@@ -35,7 +35,9 @@ export async function fetchUserProducts(filters?: {
 export async function fetchUserProductsByUserId(
   userId: string,
 ): Promise<UserProduct[]> {
-  const data = await apiRequest(`/user-products/${encodeURIComponent(userId)}`);
+  const data = await apiRequest(
+    `/processing/user-products/${encodeURIComponent(userId)}`,
+  );
   return data.user_products || [];
 }
 
@@ -69,7 +71,7 @@ export async function createUserProductText(product: {
  * Create a new user product
  */
 export async function createUserProduct(image: any, user_id: string) {
-  return apiRequest("/user-products", {
+  return apiRequest("/processsing/user-products", {
     method: "POST",
     body: JSON.stringify({
       USER_ID: user_id,
@@ -92,7 +94,7 @@ export async function updateUserProduct(
   },
 ) {
   return apiRequest(
-    `/user-products/${encodeURIComponent(userId)}/${encodeURIComponent(productId)}`,
+    `/processing/user-products/${encodeURIComponent(userId)}/${encodeURIComponent(productId)}`,
     {
       method: "PUT",
       body: JSON.stringify(updates),
@@ -105,7 +107,7 @@ export async function updateUserProduct(
  */
 export async function deleteUserProduct(userId: string, productId: string) {
   return apiRequest(
-    `/user-products/${encodeURIComponent(userId)}/${encodeURIComponent(productId)}`,
+    `/processing/user-products/${encodeURIComponent(userId)}/${encodeURIComponent(productId)}`,
     {
       method: "DELETE",
     },
