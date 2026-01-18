@@ -1,3 +1,4 @@
+import { colors } from "@/styles/shared";
 import { Canvas } from "@react-three/fiber/native";
 import React, { Suspense, useRef, useState } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
@@ -12,9 +13,9 @@ const SpinnableShelfItem = ({ item }: { item: UserProduct }) => {
     <View style={[styles.itemContainer, { width: width - 120 }]}>
       <Text style={styles.category}>{item.CATEGORY}</Text>
       <Text style={styles.brand}>{item.NAME}</Text>
-      <Text style={styles.ingredients}>
-        Ingredients: {item.INGREDIENTS?.join(", ")}
-      </Text>
+      {item.PRODUCT_DESC && (
+        <Text style={styles.ingredients}>Ingredients: {item.PRODUCT_DESC}</Text>
+      )}
 
       <View style={{ height: 200 }}>
         <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
@@ -97,11 +98,13 @@ const styles = StyleSheet.create({
   },
   brand: {
     fontSize: 16,
+    color: colors.text,
     marginTop: 5,
   },
   ingredients: {
     marginTop: 10,
     fontSize: 14,
+    color: colors.muted,
   },
   arrowLeft: {
     position: "absolute",
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
   },
   arrowText: {
     fontSize: 30,
-    color: "#333",
+    color: colors.text,
   },
   emptyText: {
     textAlign: "center",
