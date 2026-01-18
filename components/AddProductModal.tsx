@@ -1,5 +1,14 @@
-import { BlurView } from "expo-blur";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { colors, typography } from "../styles/shared";
 
@@ -14,22 +23,98 @@ export function AddProductModal({
   onClose,
   onAdd,
 }: AddProductModalProps) {
+  const [image, setImage] = useState<string | null>(null);
+  const [text, setText] = useState("");
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+
+  // Ask for camera permissions on mount
+  useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+      if (status !== "granted") {
+        Alert.alert("Camera permission is required to take photos.");
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    if (!hasPermission) return;
+
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const photo = result.assets[0];
+      setImage(photo.uri);
+      await uploadImage(photo);
+    }
+  };
+
+  const uploadImage = async (photo: ImagePicker.ImagePickerAsset) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", {
+        uri: photo.uri,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      } as unknown as Blob);
+
+      const res = await fetch("http://128.189.150.85:3001/ocr", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const textResponse = await res.text();
+        console.error("Server error:", textResponse);
+        Alert.alert("Server error", textResponse);
+        return;
+      }
+
+      const data = await res.json();
+      setText(data.text || "No text detected");
+    } catch (err) {
+      console.error("Upload failed:", err);
+      Alert.alert("Error", err instanceof Error ? err.message : "Unknown error");
+    }
+  };
+
+  const handleClose = () => {
+    setImage(null);
+    setText("");
+    onClose();
+  };
+
   return (
     <Modal
       transparent
       visible={visible}
       animationType="slide"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
       <View style={styles.modalRoot}>
-        <BlurView style={StyleSheet.absoluteFill} intensity={25} tint="dark" />
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
         <View style={styles.popup}>
           <View style={styles.popupHandle} />
           <Text style={styles.popupTitle}>Add a Product</Text>
-          <Text style={styles.popupBody}>Product Name</Text>
+
+          <Pressable style={styles.cameraButton} onPress={pickImage}>
+            <Text style={styles.cameraButtonText}>📷 Take Photo</Text>
+          </Pressable>
+
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={styles.previewImage}
+            />
+          )}
+
+          {text ? <Text style={styles.popupBody}>{text}</Text> : null}
+
           <Pressable style={styles.primaryButton} onPress={onAdd}>
-            <Text style={styles.primaryButtonText}>Add Me</Text>
+            <Text style={styles.primaryButtonText}>Add Product</Text>
           </Pressable>
         </View>
       </View>
@@ -40,23 +125,17 @@ export function AddProductModal({
 const styles = StyleSheet.create({
   modalRoot: {
     flex: 1,
-    justifyContent: "flex-start",
+    justifyContent: "flex-end",
     alignItems: "stretch",
   },
   popup: {
-    height: "70%",
+    height: "60%",
     width: "100%",
     backgroundColor: colors.surface,
     paddingHorizontal: 20,
     paddingTop: 18,
     paddingBottom: 28,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
     gap: 14,
-    shadowColor: colors.text,
-    shadowOpacity: 0.18,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 14,
     elevation: 8,
   },
   popupHandle: {
@@ -75,8 +154,24 @@ const styles = StyleSheet.create({
     ...typography.body,
     textAlign: "center",
   },
+  cameraButton: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    backgroundColor: colors.line,
+  },
+  cameraButtonText: {
+    fontSize: 16,
+    color: colors.text,
+  },
+  previewImage: {
+    height: 150,
+    width: 150,
+    alignSelf: "center",
+    borderRadius: 8,
+  },
   primaryButton: {
-    marginTop: 6,
+    marginTop: "auto",
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",

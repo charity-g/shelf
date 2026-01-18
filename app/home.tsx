@@ -41,49 +41,51 @@ export default function Home() {
           addItem(); //TODO add item info
         }}
       />
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Shelf</Text>
-      </View>
+      <View style={styles.container}>
+        {/* Empty shelf placeholder */}
+        <View style={styles.shelfPlaceholder} />
 
-      <View style={styles.shelf} />
+        <View style={styles.bottomButtons}>
+          <TouchableOpacity
+            style={styles.compareButton}
+            activeOpacity={0.8}
+            onPress={() => {
+              router.push("/compare" as Href);
+            }}
+          >
+            <Text style={styles.compareText}>Compare</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.compareButton}
-        activeOpacity={0.8}
-        onPress={() => {
-          router.push("/compare" as Href);
-        }}
-      >
-        <View style={styles.compareIcon} />
-        <Text style={styles.compareText}>compare</Text>
-      </TouchableOpacity>
-
-      <View style={styles.actionRow}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          activeOpacity={0.8}
-          onPress={() => {
-            setIsAddOpen(true);
-          }}
-        >
-          <Text style={styles.actionText}>add</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          activeOpacity={0.8}
-          onPress={() => {
-            router.push("/discover" as Href);
-          }}
-        >
-          <Text style={styles.actionText}>++</Text>
-          <Text style={styles.actionSubText}>recommend</Text>
-        </TouchableOpacity>
+          <View style={styles.actionRow}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              activeOpacity={0.8}
+              onPress={() => {
+                setIsAddOpen(true);
+              }}
+            >
+              <Text style={styles.actionText}>Add</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              activeOpacity={0.8}
+              onPress={() => {
+                router.push("/discover" as Href);
+              }}
+            >
+              <Text style={styles.actionText}>Recommend</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   header: {
     alignItems: "center",
   },
@@ -91,41 +93,45 @@ const styles = StyleSheet.create({
     ...typography.titleCaps,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 10,
-    backgroundColor: colors.subtle,
+    borderRadius: 14,
+    backgroundColor: colors.accentSoft,
   },
-  shelf: {
-    borderRadius: 18,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    backgroundColor: colors.subtle,
+  shelfPlaceholder: {
+    flex: 1,
+  },
+  bottomButtons: {
+    gap: 12,
+    paddingBottom: 16,
   },
   compareButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    borderRadius: 24,
+    borderRadius: 999,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     alignSelf: "center",
     minWidth: 160,
     justifyContent: "center",
-    backgroundColor: colors.surface,
-    shadowColor: colors.text,
-    shadowOpacity: 0.08,
+    backgroundColor: colors.accentSoft,
+    borderWidth: 1,
+    borderColor: colors.line,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.18,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   compareIcon: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: colors.subtle,
+    backgroundColor: colors.accent,
   },
   compareText: {
     fontSize: 14,
     color: colors.text,
+    fontWeight: "600",
   },
   actionRow: {
     flexDirection: "row",
@@ -134,24 +140,27 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 16,
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,
-    shadowColor: colors.text,
-    shadowOpacity: 0.08,
+    borderWidth: 1,
+    borderColor: colors.line,
+    shadowColor: colors.shadow,
+    shadowOpacity: 0.14,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 6,
+    elevation: 3,
   },
   actionText: {
     fontSize: 14,
     color: colors.text,
+    fontWeight: "600",
   },
   actionSubText: {
     marginTop: 4,
     fontSize: 10,
-    color: colors.text,
+    color: colors.muted,
   },
 });

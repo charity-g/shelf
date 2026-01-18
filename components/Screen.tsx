@@ -16,3 +16,5 @@ export function Screen({ children, style, containerStyle }: ScreenProps) {
     </View>
   );
 }
+
+export default Screen;
