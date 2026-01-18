@@ -3,7 +3,6 @@ import React, { Suspense } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import getModelConfig from "../types/modelConfig";
 import { ShelfItem } from "../types/ShelfItem";
-import GLBModel from "./GLBModel";
 import { JSONModel } from "./JSONObject";
 
 // Get device width for carousel sizing
@@ -41,7 +40,7 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
           <ambientLight intensity={0.6} />
           <directionalLight position={[5, 5, 5]} intensity={1} />
           <Suspense fallback={null}>
-            <GLBModel category={item.category} spinnable={true} />
+            <JSONModel category={item.category} spinnable={true} />
           </Suspense>
         </Canvas>
       </View>
