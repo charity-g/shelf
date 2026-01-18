@@ -106,15 +106,17 @@ app.get('/ingredients', async (req, res) => {
 // Insert a new category
 app.post('/categories', async (req, res) => {
     try {
-        const { name, description } = req.body;
+        // Handle both uppercase and lowercase field names
+        const ingredientTypeValue = req.body.INGREDIENT_TYPE || req.body.ingredient_type || req.body.name || req.body.NAME;
+        const descriptionValue = req.body.DESCRIPTION || req.body.description;
 
-        if (!name) {
-            return res.status(400).json({ error: 'Missing required field: name' });
+        if (!ingredientTypeValue) {
+            return res.status(400).json({ error: 'Missing required field: INGREDIENT_TYPE, ingredient_type, name, or NAME' });
         }
 
         const rows = await execSQL(
-            'INSERT INTO DAVID.PUBLIC.SKINCARE_DESC (name, description) VALUES (?, ?)',
-            [name, description || null]
+            'INSERT INTO DAVID.PUBLIC.SKINCARE_DESC ("INGREDIENT_TYPE", "DESCRIPTION") VALUES (?, ?)',
+            [ingredientTypeValue, descriptionValue || null]
         );
 
         res.json({
@@ -132,7 +134,6 @@ app.post('/categories', async (req, res) => {
 app.put('/categories/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description } = req.body;
 
         if (!id) {
             return res.status(400).json({ error: 'Missing category ID' });
@@ -142,13 +143,22 @@ app.put('/categories/:id', async (req, res) => {
         const updates = [];
         const binds = [];
 
-        if (name !== undefined) {
-            updates.push('name = ?');
-            binds.push(name);
+        // Handle both uppercase and lowercase field names
+        const ingredientTypeValue = req.body.INGREDIENT_TYPE !== undefined ? req.body.INGREDIENT_TYPE :
+            req.body.ingredient_type !== undefined ? req.body.ingredient_type :
+                req.body.name !== undefined ? req.body.name :
+                    req.body.NAME !== undefined ? req.body.NAME : undefined;
+
+        const descriptionValue = req.body.DESCRIPTION !== undefined ? req.body.DESCRIPTION :
+            req.body.description !== undefined ? req.body.description : undefined;
+
+        if (ingredientTypeValue !== undefined) {
+            updates.push('"INGREDIENT_TYPE" = ?');
+            binds.push(ingredientTypeValue);
         }
-        if (description !== undefined) {
-            updates.push('description = ?');
-            binds.push(description);
+        if (descriptionValue !== undefined) {
+            updates.push('"DESCRIPTION" = ?');
+            binds.push(descriptionValue);
         }
 
         if (updates.length === 0) {
@@ -158,7 +168,7 @@ app.put('/categories/:id', async (req, res) => {
         binds.push(id); // Add ID for WHERE clause
 
         const rows = await execSQL(
-            `UPDATE DAVID.PUBLIC.SKINCARE_DESC SET ${updates.join(', ')} WHERE id = ?`,
+            `UPDATE DAVID.PUBLIC.SKINCARE_DESC SET ${updates.join(', ')} WHERE "ID" = ?`,
             binds
         );
 
@@ -183,7 +193,7 @@ app.delete('/categories/:id', async (req, res) => {
         }
 
         const rows = await execSQL(
-            'DELETE FROM DAVID.PUBLIC.SKINCARE_DESC WHERE id = ?',
+            'DELETE FROM DAVID.PUBLIC.SKINCARE_DESC WHERE "ID" = ?',
             [id]
         );
 
@@ -210,7 +220,7 @@ app.post('/ingredients', async (req, res) => {
         }
 
         const rows = await execSQL(
-            'INSERT INTO DAVID.PUBLIC.INGREDIENTS_DESC (name, ingredient_type, description) VALUES (?, ?, ?)',
+            'INSERT INTO DAVID.PUBLIC.INGREDIENTS_DESC ("name", "ingredient_type", "description") VALUES (?, ?, ?)',
             [name, ingredient_type, description || null]
         );
 
@@ -239,15 +249,15 @@ app.put('/ingredients/:id', async (req, res) => {
         const binds = [];
 
         if (name !== undefined) {
-            updates.push('name = ?');
+            updates.push('"name" = ?');
             binds.push(name);
         }
         if (ingredient_type !== undefined) {
-            updates.push('ingredient_type = ?');
+            updates.push('"ingredient_type" = ?');
             binds.push(ingredient_type);
         }
         if (description !== undefined) {
-            updates.push('description = ?');
+            updates.push('"description" = ?');
             binds.push(description);
         }
 
@@ -258,7 +268,7 @@ app.put('/ingredients/:id', async (req, res) => {
         binds.push(id);
 
         const rows = await execSQL(
-            `UPDATE DAVID.PUBLIC.INGREDIENTS_DESC SET ${updates.join(', ')} WHERE id = ?`,
+            `UPDATE DAVID.PUBLIC.INGREDIENTS_DESC SET ${updates.join(', ')} WHERE "id" = ?`,
             binds
         );
 
@@ -283,7 +293,7 @@ app.delete('/ingredients/:id', async (req, res) => {
         }
 
         const rows = await execSQL(
-            'DELETE FROM DAVID.PUBLIC.INGREDIENTS_DESC WHERE id = ?',
+            'DELETE FROM DAVID.PUBLIC.INGREDIENTS_DESC WHERE "id" = ?',
             [id]
         );
 
@@ -294,6 +304,197 @@ app.delete('/ingredients/:id', async (req, res) => {
         });
     } catch (error) {
         console.error('Delete ingredient error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================
+// USER_ID / User Products Endpoints
+// ============================================
+
+// Get all user products (with optional filters)
+app.get('/user-products', async (req, res) => {
+    try {
+        const { user_id, product_id, category, skin_type } = req.query;
+
+        let sql = 'SELECT * FROM DAVID.PUBLIC.USER_ID WHERE 1=1';
+        const binds = [];
+
+        if (user_id) {
+            sql += ' AND "USER_ID" = ?';
+            binds.push(user_id);
+        }
+        if (product_id) {
+            sql += ' AND "PRODUCT_ID" = ?';
+            binds.push(product_id);
+        }
+        if (category) {
+            sql += ' AND LOWER("CATEGORY") = LOWER(?)';
+            binds.push(category);
+        }
+        if (skin_type) {
+            sql += ' AND LOWER("SKIN_TYPE") = LOWER(?)';
+            binds.push(skin_type);
+        }
+
+        sql += ' LIMIT 500';
+
+        const rows = await execSQL(sql, binds);
+        res.json({ user_products: rows });
+    } catch (error) {
+        console.error('Get user products error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get user products by user_id
+app.get('/user-products/:user_id', async (req, res) => {
+    try {
+        const { user_id } = req.params;
+
+        const rows = await execSQL(
+            'SELECT * FROM DAVID.PUBLIC.USER_ID WHERE "USER_ID" = ? LIMIT 500',
+            [user_id]
+        );
+
+        res.json({ user_products: rows });
+    } catch (error) {
+        console.error('Get user products by user_id error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Insert a new user product
+app.post('/user-products', async (req, res) => {
+    try {
+        // Handle both uppercase and lowercase field names
+        const userId = req.body.USER_ID || req.body.user_id || req.body.USERID;
+        const productId = req.body.PRODUCT_ID || req.body.product_id || req.body.PRODUCTID;
+        const productDesc = req.body.PRODUCT_DESC || req.body.product_desc || req.body.PRODUCTDESC;
+        const category = req.body.CATEGORY || req.body.category;
+        const timeOfDay = req.body.TIME_OF_DAY || req.body.time_of_day || req.body.TIMEOFDAY;
+        const skinType = req.body.SKIN_TYPE || req.body.skin_type || req.body.SKINTYPE;
+        const name = req.body.NAME || req.body.name;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'Missing required field: USER_ID' });
+        }
+        if (!productId) {
+            return res.status(400).json({ error: 'Missing required field: PRODUCT_ID' });
+        }
+
+        const rows = await execSQL(
+            'INSERT INTO DAVID.PUBLIC.USER_ID ("USER_ID", "PRODUCT_ID", "PRODUCT_DESC", "CATEGORY", "TIME_OF_DAY", "SKIN_TYPE", "NAME") VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [userId, productId, productDesc || null, category || null, timeOfDay || null, skinType || null, name || null]
+        );
+
+        res.json({
+            success: true,
+            message: 'User product created successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Create user product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Update a user product (requires both user_id and product_id)
+app.put('/user-products/:user_id/:product_id', async (req, res) => {
+    try {
+        const { user_id, product_id } = req.params;
+
+        if (!user_id || !product_id) {
+            return res.status(400).json({ error: 'Missing user_id or product_id' });
+        }
+
+        // Build update query dynamically based on provided fields
+        const updates = [];
+        const binds = [];
+
+        // Handle both uppercase and lowercase field names
+        const productDesc = req.body.PRODUCT_DESC !== undefined ? req.body.PRODUCT_DESC :
+            req.body.product_desc !== undefined ? req.body.product_desc :
+                req.body.PRODUCTDESC !== undefined ? req.body.PRODUCTDESC : undefined;
+
+        const category = req.body.CATEGORY !== undefined ? req.body.CATEGORY :
+            req.body.category !== undefined ? req.body.category : undefined;
+
+        const timeOfDay = req.body.TIME_OF_DAY !== undefined ? req.body.TIME_OF_DAY :
+            req.body.time_of_day !== undefined ? req.body.time_of_day :
+                req.body.TIMEOFDAY !== undefined ? req.body.TIMEOFDAY : undefined;
+
+        const skinType = req.body.SKIN_TYPE !== undefined ? req.body.SKIN_TYPE :
+            req.body.skin_type !== undefined ? req.body.skin_type :
+                req.body.SKINTYPE !== undefined ? req.body.SKINTYPE : undefined;
+
+        const name = req.body.NAME !== undefined ? req.body.NAME :
+            req.body.name !== undefined ? req.body.name : undefined;
+
+        if (productDesc !== undefined) {
+            updates.push('"PRODUCT_DESC" = ?');
+            binds.push(productDesc);
+        }
+        if (category !== undefined) {
+            updates.push('"CATEGORY" = ?');
+            binds.push(category);
+        }
+        if (timeOfDay !== undefined) {
+            updates.push('"TIME_OF_DAY" = ?');
+            binds.push(timeOfDay);
+        }
+        if (skinType !== undefined) {
+            updates.push('"SKIN_TYPE" = ?');
+            binds.push(skinType);
+        }
+        if (name !== undefined) {
+            updates.push('"NAME" = ?');
+            binds.push(name);
+        }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ error: 'No fields to update' });
+        }
+
+        binds.push(user_id, product_id); // Add for WHERE clause
+
+        const rows = await execSQL(
+            `UPDATE DAVID.PUBLIC.USER_ID SET ${updates.join(', ')} WHERE "USER_ID" = ? AND "PRODUCT_ID" = ?`,
+            binds
+        );
+
+        res.json({
+            success: true,
+            message: 'User product updated successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Update user product error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Delete a user product (requires both user_id and product_id)
+app.delete('/user-products/:user_id/:product_id', async (req, res) => {
+    try {
+        const { user_id, product_id } = req.params;
+
+        if (!user_id || !product_id) {
+            return res.status(400).json({ error: 'Missing user_id or product_id' });
+        }
+
+        const rows = await execSQL(
+            'DELETE FROM DAVID.PUBLIC.USER_ID WHERE "USER_ID" = ? AND "PRODUCT_ID" = ?',
+            [user_id, product_id]
+        );
+
+        res.json({
+            success: true,
+            message: 'User product deleted successfully',
+            data: rows
+        });
+    } catch (error) {
+        console.error('Delete user product error:', error);
         res.status(500).json({ error: error.message });
     }
 });

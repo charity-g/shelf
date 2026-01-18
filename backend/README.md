@@ -87,9 +87,44 @@ Returns up to 500 ingredients filtered by type from `DAVID.PUBLIC.INGREDIENTS_DE
 }
 ```
 
+### GET /user-products
+Returns up to 500 user products from `DAVID.PUBLIC.USER_ID`.
+
+**Query Parameters (all optional):**
+- `user_id`: Filter by user ID
+- `product_id`: Filter by product ID
+- `category`: Filter by category
+- `skin_type`: Filter by skin type
+
+**Response:**
+```json
+{
+  "user_products": [...]
+}
+```
+
+### GET /user-products/:user_id
+Returns all products for a specific user.
+
+### POST /user-products
+Creates a new user product record.
+
+**Required Fields:**
+- `USER_ID` (or `user_id`)
+- `PRODUCT_ID` (or `product_id`)
+
+**Optional Fields:**
+- `PRODUCT_DESC`, `CATEGORY`, `TIME_OF_DAY`, `SKIN_TYPE`, `NAME`
+
+### PUT /user-products/:user_id/:product_id
+Updates a user product record (requires both user_id and product_id).
+
+### DELETE /user-products/:user_id/:product_id
+Deletes a user product record (requires both user_id and product_id).
+
 ## Security Features
 
-- **SQL Safety**: Only `SELECT` and `SHOW` statements are allowed
-- **Parameter Binding**: User input is safely bound using Snowflake's parameter binding
-- **Optional API Key**: Can require `x-api-key` header for all routes except `/health`
+- **SQL Safety**: Only `SELECT`, `SHOW`, `INSERT`, `UPDATE`, `DELETE` statements are allowed
+- **Parameter Binding**: User input is safely bound using Snowflake's parameter binding to prevent SQL injection
+- **Optional API Key**: Can require `x-api-key` header for POST, PUT, DELETE operations (GET requests work without it)
 - **CORS Enabled**: Allows cross-origin requests from the Expo app
