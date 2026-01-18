@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
@@ -22,13 +22,18 @@ export default function Discover() {
             value={query}
             onChangeText={setQuery}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            style={styles.searchInput}
+            style={[styles.searchInput, isFocused && styles.searchInputFocused]}
           />
         </View>
-        <View style={styles.searchButton}>
+        <Pressable
+          style={styles.searchButton}
+          onPress={() => {
+            console.log("Search query:", query);
+            setIsFocused(false);
+          }}
+        >
           <Text style={styles.searchButtonText}>search</Text>
-        </View>
+        </Pressable>
       </View>
 
       <View style={styles.filterRow}>
