@@ -31,7 +31,7 @@ const defaultProducts: Product[] = [
 export default function Discover() {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [randomProducts, setRandomProducts] =
+  const [searchProducts, setSearchProducts] =
     useState<Product[]>(defaultProducts);
   const [loading, setLoading] = useState(true);
 
@@ -85,8 +85,8 @@ export default function Discover() {
             <ActivityIndicator size="small" color={colors.accent} />
             <Text style={styles.loadingText}>Loading recommendations...</Text>
           </View>
-        ) : randomProducts.length > 0 ? (
-          randomProducts.map((product) => (
+        ) : searchProducts.length > 0 ? (
+          searchProducts.map((product) => (
             <View key={product.id} style={styles.resultCard}>
               <Text style={styles.resultTitle}>{product.name}</Text>
               <Text style={styles.resultBrand}>{product.brand}</Text>
