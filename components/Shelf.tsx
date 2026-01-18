@@ -1,11 +1,32 @@
-import { useEffect, useState } from "react";
+import { Canvas } from "@react-three/fiber/native";
+import { Suspense, useEffect, useState } from "react";
 import { ObjectLoader } from "three";
 import shelf from "../assets/models/shelf.json";
 import { ShelfItem } from "../types/ShelfItem";
 import getModelConfig from "../utils/getModelConfig";
+import { JSONModel } from "./JSONObject";
 
 export function Shelf({ data }: { data: ShelfItem[] }) {
-  return <ShelfModel />;
+  return (
+    <Canvas camera={{ position: [0, 10, 14] }}>
+      <ambientLight intensity={1} />
+      <directionalLight position={[5, 5, 5]} />
+
+      <ShelfModel />
+      {data.map((item, index) => {
+        const [x, y, z] = getModelConfig(item.category).position;
+        return (
+          <Suspense key={index} fallback={null}>
+            <JSONModel
+              category={item.category}
+              spinnable={false}
+              position={[x - 5 + index * 2.5, y - 5, z]}
+            />
+          </Suspense>
+        );
+      })}
+    </Canvas>
+  );
 }
 
 function ShelfModel() {
