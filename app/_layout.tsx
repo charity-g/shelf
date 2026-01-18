@@ -70,12 +70,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="discover"
         options={{
+          title: "Discover",
           href: null,
         }}
       />
       <Tabs.Screen
         name="compare"
         options={{
+          title: "Compare",
           href: null,
         }}
       />
