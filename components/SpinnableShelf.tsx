@@ -1,23 +1,30 @@
 import { Canvas } from "@react-three/fiber/native";
 import React, { Suspense, useCallback, useRef, useState } from "react";
-import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import getModelConfig from "../types/modelConfig";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { ShelfItem } from "../types/ShelfItem";
 import { JSONModel } from "./JSONObject";
 
 // Get device width for carousel sizing
 const { width } = Dimensions.get("window");
 
-const SpinnableShelfItemView = ({ category }: { category: string }) => {
+const SpinnableShelfItem = ({ item }: { item: ShelfItem }) => {
   return (
-    <View style={{ flex: 1 }}>
-      <Canvas camera={{ position: getModelConfig(category).position, fov: 50 }}>
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
-        <Suspense fallback={null}>
-          <JSONModel category={category} spinnable={true} />
-        </Suspense>
-      </Canvas>
+    <View style={[styles.itemContainer, { width: width - 120 }]}>
+      <Text style={styles.category}>{item.category}</Text>
+      <Text style={styles.brand}>{item.brand}</Text>
+      <Text style={styles.ingredients}>
+        Ingredients: {item.ingredients.join(", ")}
+      </Text>
+
+      <View style={{ height: 200 }}>
+        <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[5, 5, 5]} intensity={1} />
+          <Suspense fallback={null}>
+            <JSONModel category={item.category} spinnable={true} />
+          </Suspense>
+        </Canvas>
+      </View>
     </View>
   );
 };
@@ -37,7 +44,9 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
     }
   }).current;
 
-  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -47,48 +56,11 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
     [data.length],
   );
 
-  const renderItem = ({ item }: { item: ShelfItem }) => (
-    <View style={[styles.itemContainer, { width: width - 120 }]}>
-      <Text style={styles.category}>{item.category}</Text>
-      <Text style={styles.brand}>{item.brand}</Text>
-      <Text style={styles.ingredients}>
-        Ingredients: {item.ingredients.join(", ")}
-      </Text>
-
-      <View style={{ height: 200 }}>
-        <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={1} />
-          <Suspense fallback={null}>
-            <JSONModel category={item.category} spinnable={true} />
-          </Suspense>
-        </Canvas>
-      </View>
-    </View>
-  );
-
   return (
     <View>
-      {/* Left/Right arrows */}
-      <Pressable
-        style={styles.arrowLeft}
-        onPress={() => scrollTo(currentIndex - 1)}
-        disabled={currentIndex === 0}
-      >
-        <Text style={styles.arrowText}>‹</Text>
-      </Pressable>
-      <Pressable
-        style={styles.arrowRight}
-        onPress={() => scrollTo(currentIndex + 1)}
-        disabled={currentIndex === data.length - 1}
-      >
-        <Text style={styles.arrowText}>›</Text>
-      </Pressable>
-
       <FlatList
-        ref={listRef}
         data={data}
-        renderItem={renderItem}
+        renderItem={({ item }) => <SpinnableShelfItem item={item} />}
         keyExtractor={(item, index) => index.toString()}
         horizontal
         pagingEnabled
@@ -102,8 +74,6 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
         })}
         contentContainerStyle={styles.carouselContainer}
       />
-
-      {/* Pagination dots */}
       <View style={styles.dotsContainer}>
         {data.map((_, i) => (
           <View
@@ -145,17 +115,21 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 10,
     zIndex: 1,
-    top: "45%",
   },
   arrowRight: {
     position: "absolute",
     right: 10,
     zIndex: 1,
-    top: "45%",
   },
   arrowText: {
     fontSize: 30,
     color: "#333",
+  },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 50,
+    fontSize: 18,
+    color: "#888",
   },
   dotsContainer: {
     flexDirection: "row",
@@ -175,12 +149,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 50,
-    fontSize: 18,
-    color: "#888",
   },
 });
 
