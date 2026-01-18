@@ -1,9 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
 
 export default function Discover() {
+  const [query, setQuery] = useState("");
+
   return (
     <Screen>
       <View style={styles.header}>
@@ -12,7 +15,13 @@ export default function Discover() {
 
       <View style={styles.searchBlock}>
         <View style={styles.searchBar}>
-          <Text style={styles.searchPlaceholder}>skincare (e.g. toner)</Text>
+          <TextInput
+            placeholder="skincare (e.g. toner)"
+            placeholderTextColor={colors.muted}
+            value={query}
+            onChangeText={setQuery}
+            style={styles.searchInput}
+          />
         </View>
         <View style={styles.searchButton}>
           <Text style={styles.searchButtonText}>search</Text>
@@ -65,9 +74,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
   },
-  searchPlaceholder: {
+  searchInput: {
     fontSize: 12,
-    color: colors.muted,
+    color: colors.text,
   },
   searchButton: {
     alignSelf: "flex-end",
