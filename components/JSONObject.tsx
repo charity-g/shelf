@@ -4,11 +4,6 @@ import { Group, ObjectLoader } from "three";
 import getModelConfig from "../utils/getModelConfig";
 import { useModelColoring } from "../utils/useModelColouring";
 
-interface JSONModelProps {
-  category?: string;
-  spinnable?: boolean;
-}
-
 function JSONModelContent({
   object,
   spinnable,
@@ -37,9 +32,18 @@ function JSONModelContent({
   );
 }
 
+interface JSONModelProps {
+  category?: string;
+  spinnable?: boolean;
+  scaleMultiplier?: number;
+  position?: [number, number, number];
+}
+
 export function JSONModel({
   category = "cleanser",
   spinnable = false,
+  scaleMultiplier,
+  position,
 }: JSONModelProps) {
   const [object, setObject] = useState<THREE.Object3D | null>(null);
   const config = getModelConfig(category);
@@ -56,8 +60,8 @@ export function JSONModel({
     <JSONModelContent
       object={object}
       spinnable={spinnable}
-      scale={config.scale}
-      position={config.position}
+      scale={scaleMultiplier ? config.scale * scaleMultiplier : config.scale}
+      position={position ?? config.position}
     />
   );
 }
