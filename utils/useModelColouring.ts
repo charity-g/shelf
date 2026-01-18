@@ -9,7 +9,7 @@ const palette = [
   colors.mint,
 ].map((c) => new Color(c));
 
-export function useModelColoring(object: Object3D | null) {
+export function useModelColoring(object: Object3D | null, highlight = false) {
   useEffect(() => {
     if (!object) return;
 
@@ -17,9 +17,17 @@ export function useModelColoring(object: Object3D | null) {
 
     object.traverse((child: any) => {
       if (child.isMesh && child.material) {
-        const base = palette[index % palette.length].clone();
-        child.material = child.material.clone();
-        child.material.color.copy(base);
+        if (highlight) {
+          const highlightColor = new Color(0xffff00); // Yellow
+          child.material = child.material.clone();
+          child.material.color.copy(highlightColor);
+        } else {
+          const base = palette[index % palette.length].clone();
+          child.material = child.material.clone();
+          child.material.color.copy(base);
+        }
+
+        child.material.needsUpdate = true;
         index++;
       }
     });

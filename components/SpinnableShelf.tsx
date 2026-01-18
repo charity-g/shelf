@@ -1,9 +1,10 @@
 import { colors } from "@/styles/shared";
 import { Canvas } from "@react-three/fiber/native";
-import React, { Suspense, useRef, useState } from "react";
+import React, { Suspense, useRef } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { UserProduct } from "../types/UserProduct";
 import { JSONModel } from "./JSONObject";
+import { OrbitingCamera } from "./OrbitingCamera";
 
 // Get device width for carousel sizing
 const { width } = Dimensions.get("window");
@@ -24,24 +25,33 @@ const SpinnableShelfItem = ({ item }: { item: UserProduct }) => {
           <Suspense fallback={null}>
             <JSONModel category={item.CATEGORY} spinnable={true} />
           </Suspense>
+
+          <OrbitingCamera radius={5} speed={1} />
         </Canvas>
       </View>
     </View>
   );
 };
 
-const SpinnableShelf = ({ data }: { data: UserProduct[] }) => {
+const SpinnableShelf = ({
+  data,
+  currItemIndex,
+  setCurrItemIndex,
+}: {
+  data: UserProduct[];
+  currItemIndex: number;
+  setCurrItemIndex: (index: number) => void;
+}) => {
   if (!data || data.length === 0) {
     return <Text style={styles.emptyText}>No items to display</Text>;
   }
 
   const listRef = useRef<FlatList<UserProduct>>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems?.length) {
       const idx = viewableItems[0].index ?? 0;
-      setCurrentIndex(idx);
+      setCurrItemIndex(idx);
     }
   }).current;
 
@@ -71,7 +81,7 @@ const SpinnableShelf = ({ data }: { data: UserProduct[] }) => {
         {data.map((_, i) => (
           <View
             key={i}
-            style={[styles.dot, i === currentIndex && styles.dotActive]}
+            style={[styles.dot, i === currItemIndex && styles.dotActive]}
           />
         ))}
       </View>

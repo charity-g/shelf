@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import { Shelf } from "@/components/Shelf";
-import SpinnableShelf from "@/components/SpinnableShelf";
 import { AddProductModal } from "../components/AddProductModal";
 import { Screen } from "../components/Screen";
 import { colors, typography } from "../styles/shared";
@@ -37,7 +36,6 @@ export default function Home() {
   return (
     <Screen>
       <Shelf data={items}></Shelf>
-      <SpinnableShelf data={items} />
       <AddProductModal
         visible={isAddOpen}
         onClose={() => setIsAddOpen(false)}
