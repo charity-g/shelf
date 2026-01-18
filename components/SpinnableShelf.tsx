@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber/native";
 import React, { Suspense } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import getModelConfig from "../types/modelConfig";
 import { ShelfItem } from "../types/ShelfItem";
 import GLBModel from "./GLBModel";
 
@@ -10,7 +11,7 @@ const { width } = Dimensions.get("window");
 const SpinnableShelfItemView = ({ category }: { category: string }) => {
   return (
     <View style={{ flex: 1 }}>
-      <Canvas camera={{ position: [0, 0, 3], fov: 50 }}>
+      <Canvas camera={{ position: getModelConfig(category).position, fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
         <Suspense fallback={null}>
