@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { performOcr } from "../api/ocr";
+import { OcrResponse, performOcr } from "../api/ocr";
 import { colors, typography } from "../styles/shared";
 
 type AddProductModalProps = {
@@ -61,9 +61,13 @@ export function AddProductModal({
         type: "image/jpeg",
       } as unknown as Blob);
 
-      let data;
+      let data: OcrResponse;
       try {
         data = await performOcr(formData);
+        if (data.error || !data.structuredData) {
+          throw new Error(data.error || "Failed to extract data from image.");
+        }
+        setText(data.structuredData?.name || "No text detected");
       } catch (err) {
         console.error("Server error:", err);
         Alert.alert(
@@ -71,7 +75,6 @@ export function AddProductModal({
           err instanceof Error ? err.message : "Unknown error",
         );
       }
-      setText(data.text || "No text detected");
     } catch (err) {
       console.error("Upload failed:", err);
       Alert.alert(
