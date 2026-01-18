@@ -28,7 +28,7 @@ export function Shelf({ data }: { data: UserProduct[] }) {
                 spinnable={false}
                 scaleMultiplier={2}
                 position={[x - 2 * data.length + index * 2.8, y + 2, z]}
-                isHighlighted={true}
+                isHighlighted={false}
               />
             </Suspense>
           );
