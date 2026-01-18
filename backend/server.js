@@ -510,7 +510,50 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Backend server running on port ${PORT}`);
+// Bind to localhost for local dev, 0.0.0.0 for production (Render)
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+const server = app.listen(PORT, host, () => {
+    console.log(`Backend server running on ${host}:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Graceful shutdown handling
+const gracefulShutdown = async (signal) => {
+    console.log(`\n${signal} received. Starting graceful shutdown...`);
+
+    server.close(async () => {
+        console.log('HTTP server closed.');
+
+        // Close Snowflake connection
+        try {
+            const { close } = await import('./snowflakeClient.js');
+            close();
+        } catch (error) {
+            console.error('Error closing Snowflake connection:', error);
+        }
+
+        console.log('Graceful shutdown complete.');
+        process.exit(0);
+    });
+
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+        console.error('Forced shutdown after timeout');
+        process.exit(1);
+    }, 10000);
+};
+
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    gracefulShutdown('uncaughtException');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    gracefulShutdown('unhandledRejection');
 });
