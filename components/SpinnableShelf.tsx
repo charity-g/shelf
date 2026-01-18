@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber/native";
-import React, { Suspense } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import React, { Suspense, useCallback, useRef, useState } from "react";
+import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import getModelConfig from "../types/modelConfig";
 import { ShelfItem } from "../types/ShelfItem";
 import { JSONModel } from "./JSONObject";
@@ -27,6 +27,26 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
     return <Text style={styles.emptyText}>No items to display</Text>;
   }
 
+  const listRef = useRef<FlatList<ShelfItem>>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems?.length) {
+      const idx = viewableItems[0].index ?? 0;
+      setCurrentIndex(idx);
+    }
+  }).current;
+
+  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
+
+  const scrollTo = useCallback(
+    (index: number) => {
+      const clamped = Math.max(0, Math.min(index, data.length - 1));
+      listRef.current?.scrollToIndex({ index: clamped, animated: true });
+    },
+    [data.length],
+  );
+
   const renderItem = ({ item }: { item: ShelfItem }) => (
     <View style={[styles.itemContainer, { width: width - 120 }]}>
       <Text style={styles.category}>{item.category}</Text>
@@ -48,14 +68,51 @@ const SpinnableShelf = ({ data }: { data: ShelfItem[] }) => {
   );
 
   return (
-    <FlatList
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-      horizontal
-      pagingEnabled
-      showsHorizontalScrollIndicator={false}
-    />
+    <View>
+      {/* Left/Right arrows */}
+      <Pressable
+        style={styles.arrowLeft}
+        onPress={() => scrollTo(currentIndex - 1)}
+        disabled={currentIndex === 0}
+      >
+        <Text style={styles.arrowText}>‹</Text>
+      </Pressable>
+      <Pressable
+        style={styles.arrowRight}
+        onPress={() => scrollTo(currentIndex + 1)}
+        disabled={currentIndex === data.length - 1}
+      >
+        <Text style={styles.arrowText}>›</Text>
+      </Pressable>
+
+      <FlatList
+        ref={listRef}
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={viewabilityConfig}
+        getItemLayout={(_, index) => ({
+          length: width - 120,
+          offset: (width - 120) * index,
+          index,
+        })}
+        contentContainerStyle={styles.carouselContainer}
+      />
+
+      {/* Pagination dots */}
+      <View style={styles.dotsContainer}>
+        {data.map((_, i) => (
+          <View
+            key={i}
+            style={[styles.dot, i === currentIndex && styles.dotActive]}
+          />
+        ))}
+      </View>
+    </View>
   );
 };
 
@@ -88,15 +145,36 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 10,
     zIndex: 1,
+    top: "45%",
   },
   arrowRight: {
     position: "absolute",
     right: 10,
     zIndex: 1,
+    top: "45%",
   },
   arrowText: {
     fontSize: 30,
     color: "#333",
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ccc",
+    marginHorizontal: 4,
+  },
+  dotActive: {
+    backgroundColor: "#333",
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   emptyText: {
     textAlign: "center",
