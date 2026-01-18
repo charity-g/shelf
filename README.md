@@ -1,7 +1,5 @@
 # shelf.
 
-## Inspiration
-
 **De-cluttering and de-influencing**
 
 The skincare industry has shifted from "self-care" to "shelf-care," a culture of overconsumption fueled by viral skincare trends. Many of us own twenty products but only have one face. We wanted to build a tool that empowers users to de-influence themselves, focusing on ingredient integrity rather than brand hype.
