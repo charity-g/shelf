@@ -1,10 +1,11 @@
 import { useFrame } from "@react-three/fiber/native";
 import { useEffect, useRef, useState } from "react";
-import { Color, Group, ObjectLoader } from "three";
+import { Group, ObjectLoader } from "three";
 import cream from "../assets/models/cream.json";
 import cylinder from "../assets/models/cylinder.json";
 import lotion from "../assets/models/lotion.json";
 import spray from "../assets/models/spray_bottle.json";
+import { useModelColoring } from "../utils/useModelColouring";
 
 interface JSONModelProps {
   category?: string;
@@ -24,15 +25,7 @@ function JSONModelContent({
 }) {
   const pivotRef = useRef<Group>(null);
 
-  useEffect(() => {
-    // Generate random color and apply to all materials
-    const randomColor = new Color(Math.random() * 0xffffff);
-    object.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        child.material.color.copy(randomColor);
-      }
-    });
-  }, [object]);
+  useModelColoring(object);
 
   useFrame(() => {
     if (spinnable && pivotRef.current) {
