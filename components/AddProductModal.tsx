@@ -90,6 +90,8 @@ export function AddProductModal({
     onClose();
   };
 
+  const isReady = !!image;
+
   return (
     <Modal
       transparent
@@ -113,8 +115,22 @@ export function AddProductModal({
 
           {text ? <Text style={styles.popupBody}>{text}</Text> : null}
 
-          <Pressable style={styles.primaryButton} onPress={onAdd}>
-            <Text style={styles.primaryButtonText}>Add Product</Text>
+          <Pressable
+            style={[
+              styles.primaryButton,
+              !isReady && styles.primaryButtonDisabled,
+            ]}
+            onPress={isReady ? onAdd : undefined}
+            disabled={!isReady}
+          >
+            <Text
+              style={[
+                styles.primaryButtonText,
+                !isReady && styles.primaryButtonTextDisabled,
+              ]}
+            >
+              Put on Shelf
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -177,10 +193,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.text,
   },
+  primaryButtonDisabled: {
+    backgroundColor: colors.line,
+  },
   primaryButtonText: {
     color: colors.surface,
     fontSize: 14,
     textTransform: "uppercase",
     letterSpacing: 1,
+  },
+  primaryButtonTextDisabled: {
+    color: colors.muted,
   },
 });
