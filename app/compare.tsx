@@ -150,7 +150,6 @@ export default function Compare() {
           </View>
         )}
 
-        {/* Selected Product Details */}
         {selectedProduct && (
           <View style={styles.detailsSection}>
             {/* Back Button */}
