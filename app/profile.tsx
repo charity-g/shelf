@@ -23,7 +23,19 @@ async function fetchProfile(): Promise<ProfileData> {
       id: user.uid,
       avatarUrl: "",
     },
-    settings: [],
+    settings: [
+      { id: "s1", label: "Push Notifications", type: "toggle", value: true },
+      {
+        id: "s2",
+        label: "Product Expiry Reminders",
+        type: "toggle",
+        value: true,
+      },
+      { id: "s3", label: "Skin Type", type: "info", value: "Combination" },
+      { id: "s4", label: "Routine Reminders", type: "toggle", value: false },
+      { id: "s5", label: "Privacy Settings", type: "link" },
+      { id: "s6", label: "Help & Support", type: "link" },
+    ],
   };
 }
 
