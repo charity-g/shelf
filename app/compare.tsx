@@ -1,4 +1,4 @@
-import Statistics from "@/components/statistics";
+import Statistics from "@/components/Statistics";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {

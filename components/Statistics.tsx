@@ -1,3 +1,4 @@
+import { getUidFromAsyncStorage } from "@/services/auth";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { fetchUserProducts, groupByCategory } from "../api/userProducts";
@@ -19,12 +20,21 @@ export default function Statistics() {
     useState<ProductsByCategory>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
       try {
         setLoading(true);
-        const userProducts = await fetchUserProducts();
+        const userId = await getUidFromAsyncStorage();
+        if (!userId) {
+          setError("User not logged in");
+          return;
+        }
+        setUserId(userId);
+        const userProducts = await fetchUserProducts({
+          user_id: userId as string,
+        });
         const products = userProducts.map(transformUserProduct);
         const grouped = groupByCategory(products);
         setProductsByCategory(grouped);
