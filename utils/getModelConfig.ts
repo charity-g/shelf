@@ -32,9 +32,9 @@ const categoricalMapping: Record<string, ModelConfig> = {
     position: [0, -0.5, 0],
   },
   moisturizer: {
-    obj: lotion,
-    scale: 0.6,
-    position: [0, -0.5, 0],
+    obj: serum,
+    scale: 0.4,
+    position: [0, -1, 0],
   },
   sunscreen: {
     obj: spray,
